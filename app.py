@@ -4,6 +4,7 @@ import io
 import base64
 from datetime import datetime
 from weasyprint import HTML
+import colorsys
 
 st.set_page_config(
     page_title="Document Refiner Pro | GLOBALINTERNET.PY",
@@ -180,7 +181,18 @@ Engineer‑in‑Chief, GlobalInternet.py
 (509) 4738 5663 | deslandes78@gmail.com
 """
 
-# ========== THEME PRESETS (defaults) ==========
+# ========== HELPER: get luminance from hex color ==========
+def get_luminance(hex_color):
+    hex_color = hex_color.lstrip('#')
+    if len(hex_color) != 6:
+        return 0.5  # fallback
+    r = int(hex_color[0:2], 16) / 255.0
+    g = int(hex_color[2:4], 16) / 255.0
+    b = int(hex_color[4:6], 16) / 255.0
+    # Standard luminance formula
+    return 0.299 * r + 0.587 * g + 0.114 * b
+
+# ========== THEME PRESETS ==========
 BACKGROUND_PRESETS = {
     "CV (Resume)": "#ffffff",
     "SWOT Analysis": "linear-gradient(135deg, #e2e2e2 0%, #c9d6ff 100%)",
@@ -220,15 +232,23 @@ with st.sidebar:
         st.session_state.last_doc_type = doc_type
         st.rerun()
     
-    # Background colour picker (initialised with preset, but user can override)
+    # Background colour picker (solid only for auto text to work)
     default_bg = BACKGROUND_PRESETS[doc_type]
     bg_css = st.color_picker("Document Background Color", default_bg)
     
-    # Header shield colour picker
-    default_header = HEADER_COLOR_PRESETS[doc_type]
-    heading_color = st.color_picker("Primary Header Shield", default_header)
+    header_color = st.color_picker("Primary Header Shield", HEADER_COLOR_PRESETS[doc_type])
     
-    text_color = st.color_picker("Body Text Ink", "#1a2a3a")
+    # Auto text colour option
+    auto_text = st.checkbox("Auto Text Color (based on background)", value=True)
+    
+    if auto_text:
+        # For solid background colours (ignore gradients), auto-select black or white
+        # Since we use a color picker, bg_css is a solid hex color.
+        luminance = get_luminance(bg_css)
+        text_color = "#ffffff" if luminance < 0.5 else "#1a2a3a"
+    else:
+        text_color = st.color_picker("Body Text Ink", "#1a2a3a")
+    
     font_family = st.selectbox("Typography Family", ["Segoe UI", "Arial", "Georgia", "Roboto"], index=0)
 
 # ========== HTML GENERATOR ==========
@@ -301,7 +321,7 @@ with col_logo:
     st.image(SRC_LOGO, width=100)
 with col_bio:
     st.markdown(f"""
-    <div style="text-align: right; font-family: 'Segoe UI', sans-serif; background-color: {heading_color}; padding: 20px; border-radius: 8px; color: white;">
+    <div style="text-align: right; font-family: 'Segoe UI', sans-serif; background-color: {header_color}; padding: 20px; border-radius: 8px; color: white;">
         <h1 style="margin:0; color:white; font-size:26px;">GESNER DESLANDES</h1>
         <p style="margin:2px 0; color:#ffd700; font-weight:bold; font-size:14px;">SOFTWARE ARCHITECT & AI SOLUTIONS ENGINEER</p>
         <p style="margin:0; color:#e0e0e0; font-size:12px;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
@@ -314,7 +334,7 @@ st.markdown("</div>", unsafe_allow_html=True)
 
 # ========== PDF EXPORT ==========
 st.markdown("### 📥 Document Asset Distribution Channel")
-live_pdf_html = build_html_document(doc_type, active_payload, bg_css, text_color, heading_color, font_family, for_pdf=True)
+live_pdf_html = build_html_document(doc_type, active_payload, bg_css, text_color, header_color, font_family, for_pdf=True)
 pdf_export_bytes = HTML(string=live_pdf_html).write_pdf()
 st.download_button(
     label=f"🏆 Compile & Export {doc_type} to PDF Sheet",
