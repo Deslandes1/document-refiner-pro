@@ -47,7 +47,7 @@ B64_LOGO = base64.b64encode(LOGO_SVG.encode('utf-8')).decode('utf-8')
 SRC_LOGO = f"data:image/svg+xml;base64,{B64_LOGO}"
 st.logo(SRC_LOGO)
 
-# ========== UPDATED CV TEMPLATE (your new text) ==========
+# ========== CV TEMPLATE (your updated text) ==========
 def get_cv_template():
     return """PROFESSIONAL SUMMARY
 Results‑driven Senior Software Architect with 4+ years of experience designing, building, and deploying 37 custom enterprise and AI applications for global clients. Expert in Python ecosystem, Streamlit engineering, advanced AI integration (Groq Llama 3.1), real‑time distributed systems, and cloud architecture. Proven ability to lead full‑cycle product engineering from baseline requirements to scalable cloud production. Fluent in English, French, Spanish, Haitian Creole.
