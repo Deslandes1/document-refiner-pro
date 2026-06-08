@@ -224,10 +224,7 @@ with st.sidebar:
 # ========== HELPER FUNCTION ==========
 def generate_html(title, content, bg, text_col, heading_col, font):
     if title == "Cover_Letter":
-        # Build professional cover letter with fixed header and signature
-        today = datetime.now().strftime("%B %d, %Y")
-        # The content includes date, RE, body, closing. We'll wrap it.
-        # Ensure content starts with date (it does from template)
+        # Build professional cover letter with fixed header (no footer)
         html_content = f"""
 <div style="text-align: center; background: {heading_col}; padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem; color: white;">
     <h1 style="margin: 0; color: white;">Gesner Deslandes</h1>
@@ -238,7 +235,7 @@ def generate_html(title, content, bg, text_col, heading_col, font):
 </div>
 """
     else:
-        # For other documents, simple text conversion
+        # For other documents, simple text conversion (no footer)
         lines = content.split("\n")
         html_content = "<br>".join([line if line.strip() == "" else line for line in lines])
     
@@ -275,20 +272,11 @@ def generate_html(title, content, bg, text_col, heading_col, font):
             border: 1px solid {heading_col};
             opacity: 0.3;
         }}
-        .footer {{
-            text-align: center;
-            margin-top: 2.5rem;
-            font-size: 0.8rem;
-            opacity: 0.7;
-            border-top: 1px solid currentColor;
-            padding-top: 1rem;
-        }}
     </style>
 </head>
 <body>
     <div class="document">
         {html_content}
-        <div class="footer">Refined by Gesner Deslandes – GlobalInternet.py</div>
     </div>
 </body>
 </html>"""
