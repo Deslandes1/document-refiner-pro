@@ -168,6 +168,36 @@ Engineer‑in‑Chief, GlobalInternet.py
 (509) 4738 5663 | deslandes78@gmail.com
 """
 
+# ========== GLOBAL SVG BRAND COMPONENTS ==========
+SVG_GLOBE_WITH_STARS = """
+<div style="position: relative; width: 85px; height: 85px;">
+    <!-- Golden Shining Stars Arc -->
+    <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; z-index: 10; white-space: nowrap;">
+        <span style="color: #ffd700; font-size: 13px; text-shadow: 0 0 6px #fff, 0 0 12px #ffd700;">★</span>
+        <span style="color: #ffd700; font-size: 17px; text-shadow: 0 0 8px #fff, 0 0 16px #ffd700; margin-top: -3px;">★</span>
+        <span style="color: #ffd700; font-size: 21px; text-shadow: 0 0 10px #fff, 0 0 20px #ffd700; margin-top: -6px;">★</span>
+        <span style="color: #ffd700; font-size: 17px; text-shadow: 0 0 8px #fff, 0 0 16px #ffd700; margin-top: -3px;">★</span>
+        <span style="color: #ffd700; font-size: 13px; text-shadow: 0 0 6px #fff, 0 0 12px #ffd700;">★</span>
+    </div>
+    <!-- Glow Effect Layer -->
+    <div style="position: absolute; width: 75px; height: 75px; border-radius: 50%; background: radial-gradient(circle, rgba(0,180,216,0.45) 0%, transparent 70%); top: 5px; left: 5px;"></div>
+    <!-- Custom Vector Blue Globe Logo -->
+    <svg viewBox="0 0 100 100" style="width: 75px; height: 75px; position: absolute; top: 5px; left: 5px; filter: drop-shadow(0 0 6px rgba(0,180,216,0.85));">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="#90e0ef" stroke-width="2" opacity="0.6"/>
+        <ellipse cx="50" cy="50" rx="45" ry="14" fill="none" stroke="#00b4d8" stroke-width="1.5" transform="rotate(25 50 50)"/>
+        <ellipse cx="50" cy="50" rx="45" ry="14" fill="none" stroke="#00b4d8" stroke-width="1.5" transform="rotate(-25 50 50)"/>
+        <circle cx="50" cy="50" r="40" fill="#03045e" stroke="#90e0ef" stroke-width="2.5" />
+        <ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="#90e0ef" stroke-width="1.2" opacity="0.85"/>
+        <ellipse cx="50" cy="50" rx="14" ry="40" fill="none" stroke="#90e0ef" stroke-width="1.2" opacity="0.85"/>
+        <line x1="10" y1="50" x2="90" y2="50" stroke="#90e0ef" stroke-width="1.2" opacity="0.8" />
+        <line x1="50" y1="10" x2="50" y2="90" stroke="#90e0ef" stroke-width="1.2" opacity="0.8" />
+        <path d="M22,43 Q25,36 32,38 T40,46 T28,53 Z" fill="#0077b6" opacity="0.9"/>
+        <path d="M58,33 Q63,38 73,36 T80,48 T63,58 Z" fill="#0077b6" opacity="0.9"/>
+        <path d="M42,63 Q47,70 52,66 T59,78 T37,76 Z" fill="#0077b6" opacity="0.9"/>
+    </svg>
+</div>
+"""
+
 # ========== SESSION STATE ==========
 if "doc_type" not in st.session_state:
     st.session_state.doc_type = "CV (Resume)"
@@ -225,6 +255,9 @@ with st.sidebar:
 
 # ========== HELPER FUNCTION ==========
 def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=False):
+    lines = content.split("\n")
+    formatted_body = "<br>".join([line if line.strip() == "" else line for line in lines])
+
     if title == "Cover_Letter":
         html_content = f"""
 <div style="text-align: center; background: {heading_col}; padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; color: white;">
@@ -236,12 +269,7 @@ def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=Fals
 </div>
 """
     elif title in ["SWOT_Analysis", "SWOT Analysis"]:
-        lines = content.split("\n")
-        formatted_body = "<br>".join([line if line.strip() == "" else line for line in lines])
-        
-        # Sea background ocean view image
         sea_bg_url = "http://googleusercontent.com/image_collection/image_retrieval/15036641857447707388_0"
-        
         html_content = f"""
 <div style="
     background: linear-gradient(rgba(15, 32, 39, 0.45), rgba(15, 32, 39, 0.75)), url('{sea_bg_url}') no-repeat center center;
@@ -257,38 +285,9 @@ def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=Fals
     border: 1px solid rgba(255, 255, 255, 0.2);
     min-height: 125px;
 ">
-    <!-- Left: Blue Globe Logo with Golden Shining Stars -->
     <div style="display: flex; align-items: center; padding-left: 5px;">
-        <div style="position: relative; width: 85px; height: 85px;">
-            <!-- Golden Shining Stars Arc -->
-            <div style="position: absolute; top: -14px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; z-index: 10; white-space: nowrap;">
-                <span style="color: #ffd700; font-size: 13px; text-shadow: 0 0 6px #fff, 0 0 12px #ffd700;">★</span>
-                <span style="color: #ffd700; font-size: 17px; text-shadow: 0 0 8px #fff, 0 0 16px #ffd700; margin-top: -3px;">★</span>
-                <span style="color: #ffd700; font-size: 21px; text-shadow: 0 0 10px #fff, 0 0 20px #ffd700; margin-top: -6px;">★</span>
-                <span style="color: #ffd700; font-size: 17px; text-shadow: 0 0 8px #fff, 0 0 16px #ffd700; margin-top: -3px;">★</span>
-                <span style="color: #ffd700; font-size: 13px; text-shadow: 0 0 6px #fff, 0 0 12px #ffd700;">★</span>
-            </div>
-            <!-- Glow Effect Layer -->
-            <div style="position: absolute; width: 75px; height: 75px; border-radius: 50%; background: radial-gradient(circle, rgba(0,180,216,0.45) 0%, transparent 70%); top: 5px; left: 5px;"></div>
-            <!-- Custom Vector Blue Globe Logo -->
-            <svg viewBox="0 0 100 100" style="width: 75px; height: 75px; position: absolute; top: 5px; left: 5px; filter: drop-shadow(0 0 6px rgba(0,180,216,0.85));">
-                <circle cx="50" cy="50" r="45" fill="none" stroke="#90e0ef" stroke-width="2" opacity="0.6"/>
-                <ellipse cx="50" cy="50" rx="45" ry="14" fill="none" stroke="#00b4d8" stroke-width="1.5" transform="rotate(25 50 50)"/>
-                <ellipse cx="50" cy="50" rx="45" ry="14" fill="none" stroke="#00b4d8" stroke-width="1.5" transform="rotate(-25 50 50)"/>
-                <circle cx="50" cy="50" r="40" fill="#03045e" stroke="#90e0ef" stroke-width="2.5" />
-                <ellipse cx="50" cy="50" rx="40" ry="14" fill="none" stroke="#90e0ef" stroke-width="1.2" opacity="0.85"/>
-                <ellipse cx="50" cy="50" rx="14" ry="40" fill="none" stroke="#90e0ef" stroke-width="1.2" opacity="0.85"/>
-                <line x1="10" y1="50" x2="90" y2="50" stroke="#90e0ef" stroke-width="1.2" opacity="0.8" />
-                <line x1="50" y1="10" x2="50" y2="90" stroke="#90e0ef" stroke-width="1.2" opacity="0.8" />
-                <!-- Continents path -->
-                <path d="M22,43 Q25,36 32,38 T40,46 T28,53 Z" fill="#0077b6" opacity="0.9"/>
-                <path d="M58,33 Q63,38 73,36 T80,48 T63,58 Z" fill="#0077b6" opacity="0.9"/>
-                <path d="M42,63 Q47,70 52,66 T59,78 T37,76 Z" fill="#0077b6" opacity="0.9"/>
-            </svg>
-        </div>
+        {SVG_GLOBE_WITH_STARS}
     </div>
-    
-    <!-- Right: Header Branding Text -->
     <div style="flex-grow: 1; text-align: right; font-family: 'Georgia', serif; padding-left: 15px;">
         <h2 style="margin: 0; color: #ffd700; font-size: 1.55rem; font-weight: bold; text-shadow: 2px 2px 4px rgba(0,0,0,0.85); line-height: 1.25;">Gesner Deslandes - Executive SWOT</h2>
         <p style="margin: 0.35rem 0 0; color: #f3f0df; font-size: 0.95rem; font-style: italic; opacity: 0.95; font-family: 'Segoe UI', sans-serif; letter-spacing: 0.5px; text-shadow: 1.5px 1.5px 3px rgba(0,0,0,0.85);">Engineer In Chief - Strategic Career Positioning</p>
@@ -298,9 +297,33 @@ def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=Fals
     {formatted_body}
 </div>
 """
+    elif title in ["Executive_Bio", "Executive Bio"]:
+        html_content = f"""
+<div style="
+    background: {heading_col};
+    padding: 1.8rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    min-height: 125px;
+">
+    <div style="display: flex; align-items: center; padding-left: 5px;">
+        {SVG_GLOBE_WITH_STARS}
+    </div>
+    <div style="flex-grow: 1; text-align: right; font-family: 'Georgia', serif; padding-left: 15px;">
+        <h2 style="margin: 0; color: #ffd700; font-size: 1.65rem; font-weight: bold; line-height: 1.25; text-shadow: 1px 1px 3px rgba(0,0,0,0.5);">Gesner Deslandes - Executive Bio</h2>
+    </div>
+</div>
+<div>
+    {formatted_body}
+</div>
+"""
     else:
-        lines = content.split("\n")
-        html_content = "<br>".join([line if line.strip() == "" else line for line in lines])
+        html_content = f"<div>{formatted_body}</div>"
     
     if pdf_mode:
         style_extra = f"""
