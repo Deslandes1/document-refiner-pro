@@ -122,7 +122,32 @@ Purpose: Software Architect / Platform Engineer (Contract)
 STRENGTHS (Internal)
 - Deep technical expertise in Python, full‑stack development, AI/LLM integration, and real‑time system design.
 - Proven track record: 37 custom applications delivered to global clients.
-- Direct client‑facing experience: requirements gathering, project management, post‑delivery support."""
+- Direct client‑facing experience: requirements gathering, project management, post‑delivery support.
+- Self‑motivated, highly organised, and effective in fully remote environments.
+- Willing to travel when required.
+- Multilingual: English, French, Spanish, Haitian Creole.
+- Entrepreneurial mindset (founder of GlobalInternet.py) combined with hands‑on coding.
+
+WEAKNESSES (Internal)
+- Limited experience in large corporate team structures (mostly solo projects).
+- No formal computer science degree (compensated by portfolio and practical results).
+- Based in Haiti – potential time zone differences with USA/Canada.
+- Lacks enterprise‑level Agile/Scrum certifications (actively learning).
+
+OPPORTUNITIES (External)
+- Leverage technical background into a senior architecture or platform engineering role within a structured organisation.
+- Transition from founder to collaborative team environment offering mentorship and growth.
+- Expand professional network in North American and European markets.
+- Use multilingual skills to support international clients and cross‑border teams.
+
+THREATS (External)
+- Competitive job market for senior tech roles.
+- Preference for candidates with local degrees or specific cloud certifications.
+- Economic and political situation in Haiti may affect travel or visa processes (fully remote is preferred).
+
+CONCLUSION
+Gesner Deslandes brings a rare combination of software architecture skills, AI integration, and direct client success. His ability to deliver production‑ready systems end‑to‑end makes him a strong candidate for senior‑level contract roles. With the right opportunity and mentorship, he will deliver significant value.
+"""
 
 def get_bio_template():
     return """Executive Bio
@@ -131,7 +156,16 @@ Prepared for: Marcy / Career Coach Marcy
 Prepared by: GESNER DESLANDES
 Date: June 2026
 
-GESNER DESLANDES is the Founder, Owner, and Engineer‑in‑Chief of GLOBALINTERNET.PY, a software development company that builds custom Python and AI‑powered solutions for clients worldwide."""
+GESNER DESLANDES is the Founder, Owner, and Engineer‑in‑Chief of GLOBALINTERNET.PY, a software development company that builds custom Python and AI‑powered solutions for clients worldwide. With over four years of hands‑on experience, he has delivered 37 unique software products, including real‑time system health monitors, AI‑powered anti‑trafficking platforms, hospital management systems, and multilingual educational tools.
+
+His technical expertise spans system architecture, full‑stack development (Python, Streamlit, Pandas, Plotly), AI integration (Groq Llama 3.1), cloud deployment (Streamlit Cloud, GitHub), and real‑time observability. He designs and builds end‑to‑end solutions that solve real problems – from anomaly detection to multilingual AI voice synthesis.
+
+Beyond coding, Gesner has substantial client‑facing experience. He communicates directly with international clients, gathers requirements, manages projects, and ensures timely, quality delivery. His leadership background includes managing IT infrastructure at the Be Like Brit Orphanage, leading reconstruction teams as an NGO interpreter, and coordinating logistics for the J/P Haitian Relief Organization.
+
+Fluent in English, French, Spanish, and Haitian Creole, Gesner is highly self‑motivated, organised, and proven to work effectively in remote environments. He is also willing to travel when necessary.
+
+He is now seeking a contract Software Architect or Platform Engineer role where he can apply his unique combination of technical depth and product delivery to help organisations scale their systems efficiently.
+"""
 
 def get_cover_body_template():
     today = datetime.now().strftime("%B %d, %Y")
@@ -141,7 +175,32 @@ RE: Senior Software Architect / Lead Platform Engineer (Contract) Position
 
 Dear Hiring Manager,
 
-I am writing to formally express my interest in the Senior Software Architect and Platform Engineer contract positions with your organization. Bringing a proven portfolio of 37 custom-engineered Python systems deployed to global production, I offer a potent blend of advanced systems infrastructure engineering, deep AI model integration, and proactive project leadership."""
+I am writing to formally express my interest in the Senior Software Architect and Platform Engineer contract positions with your organization. Bringing a proven portfolio of 37 custom-engineered Python systems deployed to global production, I offer a potent blend of advanced systems infrastructure engineering, deep AI model integration, and proactive project leadership.
+
+My recent flagship project – the System Health AI Monitor – demonstrates my ability to design enterprise‑grade observability platforms that combine real‑time metric streaming, automated anomaly detection, and AI‑generated predictive insights using Groq Llama 3.1. I have also built multilingual anti‑trafficking intelligence systems, full‑stack hospital management suites, and AI diagnostic assistants.
+
+I am fully remote, available immediately, and willing to travel when required. I look forward to discussing how my experience in architecting scalable, AI‑enabled systems can add value to your engineering teams.
+
+Sincerely,
+Gesner Deslandes
+Engineer‑in‑Chief, GlobalInternet.py
+(509) 4738 5663 | deslandes78@gmail.com
+"""
+
+# ========== THEME PRESETS (matching your architectural requirements) ==========
+BACKGROUND_PRESETS = {
+    "CV (Resume)": "#ffffff",
+    "SWOT Analysis": "linear-gradient(135deg, #e2e2e2 0%, #c9d6ff 100%)",
+    "Executive Bio": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+    "Cover Letter": "#ffffff"
+}
+
+HEADER_COLOR_PRESETS = {
+    "CV (Resume)": "#0a4c8c",
+    "SWOT Analysis": "#1e293b",
+    "Executive Bio": "#312e81",
+    "Cover Letter": "#0f766e"
+}
 
 # ========== INITIALIZE PERSISTENT REPOSITORY STATE ==========
 if "cv_text" not in st.session_state:
@@ -152,6 +211,8 @@ if "bio_text" not in st.session_state:
     st.session_state.bio_text = get_bio_template()
 if "cover_text" not in st.session_state:
     st.session_state.cover_text = get_cover_body_template()
+if "last_doc_type" not in st.session_state:
+    st.session_state.last_doc_type = "CV (Resume)"
 
 # ========== CONTROL CENTER SIDEBAR ==========
 with st.sidebar:
@@ -161,26 +222,16 @@ with st.sidebar:
     st.markdown("---")
     st.subheader("🎨 Profile Themes")
     
-    # SYSTEM BACKUP DEFINITIONS FOR ORIGINAL INDIVIDUAL CANVAS BACKGROUNDS
-    default_backgrounds = {
-        "CV (Resume)": "#ffffff",
-        "SWOT Analysis": "linear-gradient(135deg, #e2e2e2 0%, #c9d6ff 100%)",
-        "Executive Bio": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
-        "Cover Letter": "#ffffff"
-    }
+    # Apply presets dynamically – reset color pickers only when document type changes
+    if doc_type != st.session_state.last_doc_type:
+        # Force rerun to refresh the color pickers with new defaults
+        st.session_state.last_doc_type = doc_type
+        st.rerun()
     
-    # SYSTEM BACKUP DEFINITIONS FOR ORIGINAL HEADER BANNER SHIELDS
-    default_headers = {
-        "CV (Resume)": "#0a4c8c",
-        "SWOT Analysis": "#1e293b",
-        "Executive Bio": "#312e81",
-        "Cover Letter": "#0f766e"
-    }
+    bg_css = BACKGROUND_PRESETS[doc_type]
+    header_assigned_color = HEADER_COLOR_PRESETS[doc_type]
     
-    # Set default values dynamically based on selected option
-    bg_css = default_backgrounds[doc_type]
-    header_assigned_color = default_headers[doc_type]
-    
+    # Color pickers with dynamic default values (will reset when doc_type changes due to rerun)
     text_color = st.color_picker("Body Text Ink", "#1a2a3a")
     heading_color = st.color_picker("Primary Header Shield", header_assigned_color)
     font_family = st.selectbox("Typography Family", ["Segoe UI", "Arial", "Georgia", "Roboto"], index=0)
@@ -202,30 +253,56 @@ def build_html_document(title, body_text, bg, text_col, heading_col, font, for_p
     </div>
     """
     
-    container_style = f"background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 40px; border-radius: 16px; min-height: 800px;"
     if for_pdf:
-        container_style = f"background: #ffffff; color: #1a2a3a; font-family: {font}, sans-serif; padding: 0px;"
-
-    return f"""<!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="UTF-8">
-        <style>
-            @page {{ size: letter; margin: 2cm; }}
-            body {{ margin: 0; padding: 0; background-color: #f0f2f6; }}
-            .content-layer {{ {container_style} }}
-            h2, h3 {{ color: {heading_col}; margin-top: 20px; }}
-        </style>
-    </head>
-    <body>
-        <div class="content-layer">
-            {header_html}
-            <div style="font-size: 14px; line-height: 1.6; font-family: sans-serif;">
-                {escaped_body}
-            </div>
+        # PDF specific styles: use the same background, proper page margins
+        page_margin = "1.5cm"
+        container_style = f"background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 0;"
+        return f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{title}</title>
+    <style>
+        @page {{ size: Letter; margin: {page_margin}; }}
+        body {{ margin: 0; padding: 0; background: {bg}; }}
+        .document-content {{ {container_style} }}
+        h2, h3, h4 {{ color: {heading_col}; }}
+        hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
+    </style>
+</head>
+<body>
+    <div class="document-content">
+        {header_html}
+        <div style="font-size: 11pt; line-height: 1.5;">
+            {escaped_body}
         </div>
-    </body>
-    </html>"""
+    </div>
+</body>
+</html>"""
+    else:
+        # Live preview styles (with card effect for better visibility)
+        container_style = f"background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 30px; border-radius: 16px;"
+        return f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{title}</title>
+    <style>
+        body {{ margin: 0; padding: 20px; background: #f0f2f6; }}
+        .document-card {{ {container_style} box-shadow: 0 8px 20px rgba(0,0,0,0.1); }}
+        h2, h3, h4 {{ color: {heading_col}; }}
+        hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
+    </style>
+</head>
+<body>
+    <div class="document-card">
+        {header_html}
+        <div>
+            {escaped_body}
+        </div>
+    </div>
+</body>
+</html>"""
 
 # ========== PRODUCTION WORKSPACE INTERFACE ==========
 st.subheader(f"📝 Content Control Engine: {doc_type}")
@@ -246,6 +323,7 @@ else:
 # ========== STABLE RENDERING CANVAS WORKAROUND ==========
 st.markdown("### 🖥️ Native Live Sandbox Preview")
 
+# Use a temporary container with the same background as the selected canvas
 st.markdown(f"""
 <div style="background: {bg_css}; padding: 30px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd;">
 """, unsafe_allow_html=True)
