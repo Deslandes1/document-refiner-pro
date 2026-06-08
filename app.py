@@ -18,7 +18,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ========== PROFESSIONAL TEMPLATES (senior‑level) ==========
+# ========== PROFESSIONAL TEMPLATES ==========
 def get_cv_template():
     return """Gesner Deslandes
 deslandes78@gmail.com | +509 4738 5663 | Haiti
@@ -147,7 +147,17 @@ He is now seeking a contract Software Architect or Platform Engineer role where 
 """
 
 def get_cover_template():
-    return """Dear Hiring Team,
+    today = datetime.now().strftime("%B %d, %Y")
+    return f"""<div style="background: #0a4c8c; padding: 1.5rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; color: white;">
+<h1 style="margin: 0; color: white;">Gesner Deslandes</h1>
+<p style="margin: 0.5rem 0 0; color: #e0e0e0;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
+</div>
+
+Date: {today}
+
+RE: Software Architect (Contract) Role
+
+Dear Hiring Manager,
 
 I am writing to express my strong interest in the Software Architect (Contract) role. With over four years of experience designing, building, and deploying 37 custom Python applications for global clients, I bring a rare combination of hands‑on system architecture, AI integration, and client‑facing delivery.
 
@@ -159,9 +169,7 @@ I am fully remote, available immediately, and willing to travel when required. I
 
 Sincerely,
 Gesner Deslandes
-Engineer‑in‑Chief, GlobalInternet.py
-(509) 4738 5663 | deslandes78@gmail.com
-"""
+Engineer‑in‑Chief, GlobalInternet.py"""
 
 # ========== SESSION STATE ==========
 if "doc_type" not in st.session_state:
@@ -219,9 +227,13 @@ with st.sidebar:
 
 # ========== HELPER FUNCTION ==========
 def generate_html(title, content, bg, text_col, heading_col, font):
-    lines = content.split("\n")
     # Convert plain text to HTML with <br> and preserve structure
-    html_content = "<br>".join([line.replace(" ", "&nbsp;") if line.strip() == "" else line for line in lines])
+    lines = content.split("\n")
+    # For cover letter, we already have HTML header, so we just pass through
+    if title == "Cover_Letter":
+        html_content = content
+    else:
+        html_content = "<br>".join([line if line.strip() == "" else line for line in lines])
     return f"""<!DOCTYPE html>
 <html>
 <head>
@@ -277,13 +289,15 @@ def generate_html(title, content, bg, text_col, heading_col, font):
 st.title(f"✍️ Edit & Preview: {st.session_state.doc_type}")
 
 # Editor
+current_text = {
+    "CV (Resume)": st.session_state.cv_text,
+    "SWOT Analysis": st.session_state.swot_text,
+    "Executive Bio": st.session_state.bio_text,
+    "Cover Letter": st.session_state.cover_text
+}[st.session_state.doc_type]
+
 edited_text = st.text_area("Edit your document here (plain text – you can adjust any section)",
-                            value={
-                                "CV (Resume)": st.session_state.cv_text,
-                                "SWOT Analysis": st.session_state.swot_text,
-                                "Executive Bio": st.session_state.bio_text,
-                                "Cover Letter": st.session_state.cover_text
-                            }[st.session_state.doc_type],
+                            value=current_text,
                             height=500)
 
 # Save changes
@@ -298,7 +312,7 @@ else:
 
 # Live preview
 st.subheader("📄 Live Preview (Styled Document)")
-preview_html = generate_html(st.session_state.doc_type, edited_text, bg_css, text_color, heading_color, font_family)
+preview_html = generate_html(st.session_state.doc_type.replace(" ", "_"), edited_text, bg_css, text_color, heading_color, font_family)
 st.components.v1.html(preview_html, height=650, scrolling=True)
 
 # Download current document
@@ -310,4 +324,4 @@ st.download_button(
     use_container_width=True
 )
 
-st.info("💡 After downloading the HTML, open it in your browser, press Ctrl+P (or Cmd+P) and choose 'Save as PDF'. The background will be preserved.")
+st.info("💡 After downloading the HTML, open it in your browser, press Ctrl+P (or Cmd+P) and choose 'Save as PDF'. The background and all styles will be preserved.")
