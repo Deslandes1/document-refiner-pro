@@ -1,7 +1,4 @@
 import streamlit as st
-import zipfile
-import io
-import base64
 from datetime import datetime
 
 st.set_page_config(
@@ -10,14 +7,7 @@ st.set_page_config(
     layout="wide"
 )
 
-st.markdown("""
-<style>
-    .stApp { background-color: #f0f2f6; }
-    .stButton>button { background-color: #2c7be5; color: white; border-radius: 25px; width: 100%; }
-</style>
-""", unsafe_allow_html=True)
-
-# ========== PROFESSIONAL TEMPLATES ==========
+# ========== PROFESSIONAL TEMPLATES (same as before) ==========
 def get_cv_template():
     return """Gesner Deslandes
 deslandes78@gmail.com | +509 4738 5663 | Haiti
@@ -145,7 +135,7 @@ Fluent in English, French, Spanish, and Haitian Creole, Gesner is highly self‑
 He is now seeking a contract Software Architect or Platform Engineer role where he can apply his unique combination of technical depth and product delivery to help organisations scale their systems efficiently.
 """
 
-def get_cover_body_template():
+def get_cover_template():
     today = datetime.now().strftime("%B %d, %Y")
     return f"""{today}
 
@@ -177,110 +167,19 @@ if "swot_text" not in st.session_state:
 if "bio_text" not in st.session_state:
     st.session_state.bio_text = get_bio_template()
 if "cover_text" not in st.session_state:
-    st.session_state.cover_text = get_cover_body_template()
+    st.session_state.cover_text = get_cover_template()
 
 # ========== SIDEBAR ==========
 with st.sidebar:
-    st.title("🎨 Document Refiner Pro")
+    st.title("📄 Document Refiner Pro")
     st.markdown("---")
     doc_type = st.radio("Select Document", ["CV (Resume)", "SWOT Analysis", "Executive Bio", "Cover Letter"], index=0)
     st.session_state.doc_type = doc_type
-    
-    st.markdown("---")
-    st.subheader("🎨 Document Styling")
-    bg_options = {
-        "Sky Blue Gradient": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
-        "Ocean Deep": "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)",
-        "Sunset": "linear-gradient(135deg, #f5af19 0%, #f12711 100%)",
-        "Mountain Mist": "linear-gradient(135deg, #e2e2e2 0%, #c9d6ff 100%)",
-        "Dark Elegant": "linear-gradient(135deg, #0f2027 0%, #203a43 100%)",
-        "Clean White": "#ffffff"
-    }
-    selected_bg = st.selectbox("Document Background", list(bg_options.keys()), index=0)
-    bg_css = bg_options[selected_bg]
-    
-    text_color = st.color_picker("Text Color", "#1a2a3a")
-    heading_color = st.color_picker("Heading Color", "#0a4c8c")
-    font_family = st.selectbox("Font Family", ["Segoe UI", "Arial", "Georgia", "Roboto", "Calibri"], index=0)
-    
     st.markdown("---")
     st.caption("Built by Gesner Deslandes | GlobalInternet.py")
-    
-    # Download all as ZIP (HTML files)
-    if st.button("📦 Download All Documents as ZIP (HTML)", use_container_width=True):
-        zip_buffer = io.BytesIO()
-        with zipfile.ZipFile(zip_buffer, "w") as zf:
-            for name, text in [("CV_Resume.html", st.session_state.cv_text),
-                               ("SWOT_Analysis.html", st.session_state.swot_text),
-                               ("Executive_Bio.html", st.session_state.bio_text),
-                               ("Cover_Letter.html", st.session_state.cover_text)]:
-                html = generate_html(name.replace(".html", ""), text, bg_css, text_color, heading_color, font_family)
-                zf.writestr(name, html)
-        zip_buffer.seek(0)
-        b64 = base64.b64encode(zip_buffer.read()).decode()
-        href = f'<a href="data:application/zip;base64,{b64}" download="refined_documents.zip">Click here to download ZIP (HTML)</a>'
-        st.markdown(href, unsafe_allow_html=True)
-
-# ========== HELPER FUNCTION ==========
-def generate_html(title, content, bg, text_col, heading_col, font):
-    if title == "Cover_Letter":
-        html_content = f"""
-<div style="text-align: center; background: {heading_col}; padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem; color: white;">
-    <h1 style="margin: 0; color: white;">Gesner Deslandes</h1>
-    <p style="margin: 0.5rem 0 0; opacity: 0.9;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
-</div>
-<div style="margin-bottom: 1rem;">
-    {content.replace(chr(10), '<br>')}
-</div>
-"""
-    else:
-        lines = content.split("\n")
-        html_content = "<br>".join([line if line.strip() == "" else line for line in lines])
-    
-    return f"""<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>{title}</title>
-    <style>
-        body {{
-            margin: 0;
-            padding: 2rem;
-            background: #e6e9f0;
-            display: flex;
-            justify-content: center;
-            font-family: '{font}', sans-serif;
-        }}
-        .document {{
-            max-width: 1000px;
-            width: 100%;
-            background: {bg};
-            border-radius: 20px;
-            padding: 3rem 2.5rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            color: {text_col};
-        }}
-        h1, h2, h3, h4 {{
-            color: {heading_col};
-            margin-top: 1.2em;
-            margin-bottom: 0.5em;
-        }}
-        hr {{
-            margin: 1.5em 0;
-            border: 1px solid {heading_col};
-            opacity: 0.3;
-        }}
-    </style>
-</head>
-<body>
-    <div class="document">
-        {html_content}
-    </div>
-</body>
-</html>"""
 
 # ========== MAIN AREA ==========
-st.title(f"✍️ Edit & Preview: {st.session_state.doc_type}")
+st.title(f"✍️ Edit & Download: {st.session_state.doc_type}")
 
 current_text = {
     "CV (Resume)": st.session_state.cv_text,
@@ -289,9 +188,7 @@ current_text = {
     "Cover Letter": st.session_state.cover_text
 }[st.session_state.doc_type]
 
-edited_text = st.text_area("Edit your document here (plain text – you can adjust any section)",
-                            value=current_text,
-                            height=500)
+edited_text = st.text_area("Edit your document here (plain text)", value=current_text, height=500)
 
 # Save changes
 if st.session_state.doc_type == "CV (Resume)":
@@ -303,18 +200,13 @@ elif st.session_state.doc_type == "Executive Bio":
 else:
     st.session_state.cover_text = edited_text
 
-# Live preview
-st.subheader("📄 Live Preview")
-preview_html = generate_html(st.session_state.doc_type.replace(" ", "_"), edited_text, bg_css, text_color, heading_color, font_family)
-st.components.v1.html(preview_html, height=650, scrolling=True)
-
-# Download current document as HTML
+# Download as plain text file
 st.download_button(
-    label="📥 Download Current Document as HTML",
-    data=preview_html,
-    file_name=f"{st.session_state.doc_type.lower().replace(' ', '_')}.html",
-    mime="text/html",
+    label="📥 Download as TXT File",
+    data=edited_text,
+    file_name=f"{st.session_state.doc_type.lower().replace(' ', '_')}.txt",
+    mime="text/plain",
     use_container_width=True
 )
 
-st.info("💡 After downloading the HTML, open it in your browser, then press Ctrl+P (or Cmd+P) and choose 'Save as PDF' to get a professional PDF with all styles preserved.")
+st.info("This downloads a plain text file. You can open it in any text editor (including Opera).")
