@@ -3,7 +3,7 @@ import zipfile
 import io
 import base64
 from datetime import datetime
-from weasyprint import HTML  # add this line
+from weasyprint import HTML
 
 st.set_page_config(
     page_title="Document Refiner Pro | GlobalInternet.py",
@@ -18,7 +18,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ========== PROFESSIONAL TEMPLATES (same as you provided) ==========
+# ========== PROFESSIONAL TEMPLATES ==========
 def get_cv_template():
     return """Gesner Deslandes
 deslandes78@gmail.com | +509 4738 5663 | Haiti
@@ -207,7 +207,7 @@ with st.sidebar:
     st.markdown("---")
     st.caption("Built by Gesner Deslandes | GlobalInternet.py")
     
-    # ZIP download: generate PDFs instead of HTML
+    # Download all as ZIP (PDF)
     if st.button("📦 Download All Documents as ZIP (PDF)", use_container_width=True):
         zip_buffer = io.BytesIO()
         with zipfile.ZipFile(zip_buffer, "w") as zf:
@@ -215,7 +215,7 @@ with st.sidebar:
                                ("SWOT_Analysis", st.session_state.swot_text),
                                ("Executive_Bio", st.session_state.bio_text),
                                ("Cover_Letter", st.session_state.cover_text)]:
-                html_str = generate_html(name, text, bg_css, text_color, heading_color, font_family)
+                html_str = generate_html(name, text, bg_css, text_color, heading_color, font_family, pdf_mode=True)
                 pdf_bytes = HTML(string=html_str).write_pdf()
                 zf.writestr(f"{name}.pdf", pdf_bytes)
         zip_buffer.seek(0)
@@ -224,7 +224,7 @@ with st.sidebar:
         st.markdown(href, unsafe_allow_html=True)
 
 # ========== HELPER FUNCTION ==========
-def generate_html(title, content, bg, text_col, heading_col, font):
+def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=False):
     if title == "Cover_Letter":
         html_content = f"""
 <div style="text-align: center; background: {heading_col}; padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem; color: white;">
@@ -239,27 +239,55 @@ def generate_html(title, content, bg, text_col, heading_col, font):
         lines = content.split("\n")
         html_content = "<br>".join([line if line.strip() == "" else line for line in lines])
     
+    # Use different styles for PDF vs screen preview
+    if pdf_mode:
+        # PDF optimised: letter size, full width, larger font
+        style_extra = """
+            @page {
+                size: Letter;
+                margin: 1.5cm;
+            }
+            body {
+                margin: 0;
+                padding: 0;
+                background: white;
+                font-size: 11pt;
+            }
+            .document {
+                width: 100%;
+                background: """ + bg + """;
+                padding: 1.5cm;
+                box-shadow: none;
+                border-radius: 0;
+            }
+        """
+    else:
+        # Screen preview: still nice, but with fixed max-width for readability
+        style_extra = """
+            body {
+                margin: 0;
+                padding: 2rem;
+                background: #e6e9f0;
+            }
+            .document {
+                max-width: 1000px;
+                margin: 0 auto;
+                background: """ + bg + """;
+                border-radius: 20px;
+                padding: 3rem 2.5rem;
+                box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            }
+        """
+    
     return f"""<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <title>{title}</title>
     <style>
+        {style_extra}
         body {{
-            margin: 0;
-            padding: 2rem;
-            background: #e6e9f0;
-            display: flex;
-            justify-content: center;
             font-family: '{font}', sans-serif;
-        }}
-        .document {{
-            max-width: 1000px;
-            width: 100%;
-            background: {bg};
-            border-radius: 20px;
-            padding: 3rem 2.5rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             color: {text_col};
         }}
         h1, h2, h3, h4 {{
@@ -305,14 +333,15 @@ elif st.session_state.doc_type == "Executive Bio":
 else:
     st.session_state.cover_text = edited_text
 
-# Live preview (HTML)
+# Live preview (screen mode)
 st.subheader("📄 Live Preview")
-preview_html = generate_html(st.session_state.doc_type.replace(" ", "_"), edited_text, bg_css, text_color, heading_color, font_family)
+preview_html = generate_html(st.session_state.doc_type.replace(" ", "_"), edited_text, bg_css, text_color, heading_color, font_family, pdf_mode=False)
 st.components.v1.html(preview_html, height=650, scrolling=True)
 
-# Download current document as PDF (direct download)
+# Download current document as PDF (using PDF‑optimised styles)
 if st.button("📥 Download Current Document as PDF", use_container_width=True):
-    pdf_bytes = HTML(string=preview_html).write_pdf()
+    pdf_html = generate_html(st.session_state.doc_type.replace(" ", "_"), edited_text, bg_css, text_color, heading_color, font_family, pdf_mode=True)
+    pdf_bytes = HTML(string=pdf_html).write_pdf()
     st.download_button(
         label="✅ Click to save PDF",
         data=pdf_bytes,
@@ -321,4 +350,4 @@ if st.button("📥 Download Current Document as PDF", use_container_width=True):
         use_container_width=True
     )
 
-st.info("The PDF is generated directly – no browser printing needed. When you click the button, a real .pdf file will download.")
+st.info("💡 The PDF download now creates a standard letter‑size document with normal margins – perfect for printing or emailing.")
