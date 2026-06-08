@@ -20,57 +20,51 @@ st.markdown("""
 
 # ========== PROFESSIONAL TEMPLATES ==========
 def get_cv_template():
-    return """Gesner Deslandes
-deslandes78@gmail.com | +509 4738 5663 | Haiti
+    return """PROFESSIONAL SUMMARY
 
-SOFTWARE ARCHITECT & AI SOLUTIONS ENGINEER
-
-PROFESSIONAL SUMMARY
-
-Results‑driven Software Architect with 4+ years of experience designing, building, and deploying 37 custom applications for global clients. Expert in Python, Streamlit, AI integration (Groq Llama 3.1), real‑time systems, and cloud deployment. Proven ability to lead full‑cycle product development, from requirements to deployment. Fluent in English, French, Spanish, Haitian Creole.
+Results‑driven Senior Software Architect with 4+ years of experience designing, building, and deploying 37 custom enterprise and AI applications for global clients. Expert in Python ecosystem, Streamlit engineering, advanced AI integration (Groq Llama 3.1), real‑time distributed systems, and cloud architecture. Proven ability to lead full‑cycle product engineering from baseline requirements to scalable cloud production. Fluent in English, French, Spanish, Haitian Creole.
 
 CORE COMPETENCIES
 
-- System Architecture: Real‑time data pipelines, observability platforms, API design
-- AI & Machine Learning: LLM integration, prompt engineering, anomaly detection
-- Full‑Stack Development: Python, Streamlit, Pandas, Plotly, REST APIs
-- Cloud & DevOps: Streamlit Cloud, GitHub, secrets management, CI/CD concepts
-- Multilingual Solutions: English, French, Spanish UI and AI voice synthesis
+- System Architecture: Distributed real‑time data pipelines, high-throughput observability platforms, API design
+- AI & Machine Learning: LLM integration, prompt engineering, anomaly detection, autonomous agent logic
+- Full‑Stack Development: Python, Streamlit, Pandas, Plotly, asynchronous REST APIs
+- Cloud & DevOps: Streamlit Cloud infrastructure, advanced GitHub version control, secrets management, CI/CD pipelines
+- Multilingual Solutions: Cross-border UI/UX adaptation, internationalization, and AI audio synthesis
 
 KEY PROJECTS
 
 System Health AI Monitor | Architect & Creator
 Live: https://system-health-ai-monitor-important-9bemdyosmbfmtx4t8wygbv.streamlit.app/
-- Designed and deployed a real‑time observability tool that simulates server metrics, detects anomalies, and provides AI‑powered predictive insights using Groq Llama 3.1.
-- Integrated multilingual UI (English, French, Spanish) and AI voice explanation using edge‑tts.
+- Designed and deployed an enterprise-grade observability platform that simulates mission-critical server metrics, detects systemic anomalies, and generates AI‑driven predictive insights via Groq Llama 3.1.
+- Engineered a multilingual user interface (English, French, Spanish) along with synchronized AI vocal diagnostics leveraging edge‑tts.
 
 SafeHaven – Anti‑Trafficking AI | Lead Developer
 Live: https://call-for-code-ai-global-challenge-2026-jimupcwzzyntghxdwxpbg9.streamlit.app/
-- Built an AI‑powered early warning system that analyzes user‑submitted situations, flags trafficking indicators, and provides anonymous reporting.
-- Used Groq LLM to generate risk assessments and actionable advice.
+- Built an AI‑powered early warning intelligence system that processes user‑submitted risk environments, flags human trafficking indicators, and handles anonymous data routing.
+- Leveraged Groq LLM backends to generate granular risk matrices and automated situational action plans.
 
 Hospital Management System | Full‑Stack Developer
 Live: https://hospital-management-system-software-built-by-gesner-deslandes.streamlit.app/
-- Developed a complete hospital management suite with patient registration, EMR, billing, pharmacy, lab, radiology, and AI diagnostic assistant.
-- Integrated real‑time alerts and multilingual support.
+- Developed an all-in-one hospital management suite spanning modern patient intake, EMR logs, dynamic ledger billing, pharmacy tracking, and an integrated AI diagnostic core.
+- Configured real‑time system alerts and dynamic multilingual translation layers.
 
 PROFESSIONAL EXPERIENCE
 
 GlobalInternet.py – Founder & Engineer‑in‑Chief | 2021 – Present
-- Delivered 37 custom Python applications (voting systems, BI dashboards, AI chatbots, educational platforms, self‑driving car simulator).
-- Led all phases: client consultation, requirements gathering, architecture design, coding, deployment, and documentation.
-- Managed full‑stack development using Streamlit, Pandas, Plotly, and integrated third‑party APIs (Groq, edge‑tts).
-- Deployed applications on Streamlit Cloud; used GitHub for version control.
+- Formulated and delivered 37 advanced Python applications ranging from biometric voting engines and custom business intelligence suites to interactive autonomous vehicle simulators.
+- Directed all high-level operational phases: strategic architecture design, agile product coding, client discovery, and secure cloud system deployment.
+- Maintained a production tech stack focused on Streamlit framework mastery, real-time data streaming, and deep API integrations (Groq, edge-tts).
 
 Be Like Brit Orphanage – Technology Coordinator | 2021 – Present
-- Manage IT infrastructure (laptops, tablets, Zoom, daily support) for 50+ users.
-- Troubleshoot hardware/software issues independently.
+- Supervise core IT infrastructure, cloud connectivity protocols, security firewalls, and hardware availability matrices for over 50 power users.
+- Independently manage full-system troubleshooting and hardware asset management under dynamic infrastructure profiles.
 
 EDUCATION & CERTIFICATIONS
 
-- Self‑taught Software Engineer (continuous learning)
-- Vocational Training – American English
-- Office Computing Certification (2000)
+- Senior-Level Software Architecture Portfolio (Continuous Practical Research)
+- Vocational Training Certification – Advanced American English
+- Office Computing Specialist Certification
 - High School Graduate
 
 LANGUAGES
@@ -150,17 +144,19 @@ def get_cover_body_template():
     today = datetime.now().strftime("%B %d, %Y")
     return f"""{today}
 
-RE: Software Architect (Contract) Role
+RE: Senior Software Architect / Lead Platform Engineer (Contract) Position
 
 Dear Hiring Manager,
 
-I am writing to express my strong interest in the Software Architect (Contract) role. With over four years of experience designing, building, and deploying 37 custom Python applications for global clients, I bring a rare combination of hands‑on system architecture, AI integration, and client‑facing delivery.
+I am writing to formally express my interest in the Senior Software Architect and Platform Engineer contract positions with your organization. Bringing a proven portfolio of 37 custom-engineered Python systems deployed to global production, I offer a potent blend of advanced systems infrastructure engineering, deep AI model integration, and proactive project leadership.
 
-My recent project – the System Health AI Monitor – demonstrates my ability to design real‑time observability tools that integrate AI for predictive anomaly detection. It simulates server metrics, automatically alerts on anomalies, and uses Groq Llama 3.1 to provide actionable recommendations. This project showcases my architecture‑level thinking and full‑stack implementation.
+Throughout my tenure as Engineer-in-Chief at GlobalInternet.py, I have specialized in building robust solutions to complex computational problems. My recent system, the System Health AI Monitor, directly demonstrates my capacity to design and architect real-time observability platforms. This production tool simulates complex infrastructure metrics, executes multi-threaded anomaly tracking, and interfaces with specialized Groq Llama 3.1 pipelines to render instant, context-aware architectural feedback. 
 
-I have also delivered AI‑powered anti‑trafficking platforms, hospital management systems with AI diagnostic assistants, and multilingual educational software. I manage the entire software lifecycle: requirements, architecture, coding, deployment, documentation, and client support.
+Furthermore, I have architected high-impact solutions encompassing multilingual educational framework packages, enterprise asset software, and safety platforms built around international security models. I directly command the entire lifecycle of software execution—translating rough client operational hurdles into scalable system schemas, optimizing code maintainability via clean Python logic, writing comprehensive unit pipelines, and provisioning reliable, low-latency live operations on Streamlit Cloud using GitHub workflows.
 
-I am fully remote, available immediately, and willing to travel when required. I look forward to discussing how my experience in building scalable, AI‑enabled systems can add value to your engineering teams.
+Operating at a senior architectural tier, my capability to manage both codebases and client deliverables provides business units with an independent execution resource. I am fully prepared to manage high-availability systems remotely, synchronize across distributed international timelines, and travel on-site to assist core engineering squads whenever your roadmap dictates.
+
+I welcome the opportunity to dive deep into your active platform milestones and outline exactly how my specialized AI integration workflows can immediately accelerate your team's velocity. Thank you for your time, consideration, and leadership review.
 
 Sincerely,
 Gesner Deslandes
@@ -258,14 +254,58 @@ def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=Fals
     lines = content.split("\n")
     formatted_body = "<br>".join([line if line.strip() == "" else line for line in lines])
 
-    if title == "Cover_Letter":
+    if title in ["CV_Resume", "CV (Resume)"]:
         html_content = f"""
-<div style="text-align: center; background: {heading_col}; padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; color: white;">
-    <h1 style="margin: 0; color: white; font-size: 1.5rem;">Gesner Deslandes</h1>
-    <p style="margin: 0.3rem 0 0; opacity: 0.9;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
+<div style="
+    background: {heading_col};
+    padding: 1.8rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    min-height: 125px;
+">
+    <div style="display: flex; align-items: center; padding-left: 5px;">
+        {SVG_GLOBE_WITH_STARS}
+    </div>
+    <div style="flex-grow: 1; text-align: right; font-family: 'Segoe UI', sans-serif; padding-left: 15px;">
+        <h1 style="margin: 0; color: white; font-size: 2.1rem; font-weight: bold; line-height: 1.1;">Gesner Deslandes</h1>
+        <p style="margin: 0.4rem 0 0.2rem; color: #f3f0df; font-size: 0.95rem; opacity: 0.9;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
+        <p style="margin: 0; color: #ffd700; font-size: 1.15rem; font-weight: bold; letter-spacing: 0.7px;">SOFTWARE ARCHITECT & AI SOLUTIONS ENGINEER</p>
+    </div>
 </div>
 <div>
-    {content.replace(chr(10), '<br>')}
+    {formatted_body}
+</div>
+"""
+    elif title in ["Cover_Letter", "Cover Letter"]:
+        html_content = f"""
+<div style="
+    background: {heading_col};
+    padding: 1.8rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    min-height: 125px;
+">
+    <div style="display: flex; align-items: center; padding-left: 5px;">
+        {SVG_GLOBE_WITH_STARS}
+    </div>
+    <div style="flex-grow: 1; text-align: right; font-family: 'Segoe UI', sans-serif; padding-left: 15px;">
+        <h1 style="margin: 0; color: white; font-size: 2.1rem; font-weight: bold; line-height: 1.1;">Gesner Deslandes</h1>
+        <p style="margin: 0.4rem 0 0.2rem; color: #f3f0df; font-size: 0.95rem; opacity: 0.9;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
+        <p style="margin: 0; color: #ffd700; font-size: 1.15rem; font-weight: bold; letter-spacing: 0.7px;">SOFTWARE ARCHITECT & AI SOLUTIONS ENGINEER</p>
+    </div>
+</div>
+<div>
+    {formatted_body}
 </div>
 """
     elif title in ["SWOT_Analysis", "SWOT Analysis"]:
