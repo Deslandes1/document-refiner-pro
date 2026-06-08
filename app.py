@@ -27,7 +27,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ========== FIXED EMBEDDED LOGO DATA ==========
-# High-fidelity vector graphic with golden star crescent array matching requested profile geometry
 LOGO_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 115" width="90" height="105">
     <g transform="translate(0, 15)">
         <circle cx="50" cy="50" r="45" fill="none" stroke="#90e0ef" stroke-width="2" opacity="0.6"/>
@@ -55,7 +54,7 @@ B64_LOGO = base64.b64encode(LOGO_SVG.encode('utf-8')).decode('utf-8')
 SRC_LOGO = f"data:image/svg+xml;base64,{B64_LOGO}"
 
 # Permanent Sidebar Identity Branding
-st.logo(SRC_LOGO, link="https://github.com")
+st.logo(SRC_LOGO)
 
 # ========== DATA CACHE TEMPLATES ==========
 def get_cv_template():
@@ -121,7 +120,7 @@ REFERENCES
 def get_swot_template():
     return """Executive SWOT Analysis
 
-Prepared by: Gesner Deslandes
+Prepared by: GESNER DESLANDES
 Date: June 2026
 Purpose: Software Architect / Platform Engineer (Contract)
 
@@ -134,10 +133,10 @@ def get_bio_template():
     return """Executive Bio
 
 Prepared for: Marcy / Career Coach Marcy
-Prepared by: Gesner Deslandes
+Prepared by: GESNER DESLANDES
 Date: June 2026
 
-Gesner Deslandes is the Founder, Owner, and Engineer‑in‑Chief of GLOBALINTERNET.PY, a software development company that builds custom Python and AI‑powered solutions for clients worldwide."""
+GESNER DESLANDES is the Founder, Owner, and Engineer‑in‑Chief of GLOBALINTERNET.PY, a software development company that builds custom Python and AI‑powered solutions for clients worldwide."""
 
 def get_cover_body_template():
     today = datetime.now().strftime("%B %d, %Y")
@@ -182,7 +181,6 @@ with st.sidebar:
 def build_html_document(title, body_text, bg, text_col, heading_col, font, for_pdf=False):
     escaped_body = body_text.replace("\n", "<br>")
     
-    # Unified Global Header Canvas Blueprint
     header_html = f"""
     <div style="background-color: {heading_col}; padding: 24px; border-radius: 12px; margin-bottom: 30px; display: table; width: 100%; box-sizing: border-box;">
         <div style="display: table-cell; vertical-align: middle; width: 100px;">
@@ -224,7 +222,6 @@ def build_html_document(title, body_text, bg, text_col, heading_col, font, for_p
 # ========== PRODUCTION WORKSPACE INTERFACE ==========
 st.subheader(f"📝 Content Control Engine: {doc_type}")
 
-# Routing assignment selector
 if doc_type == "CV (Resume)":
     st.session_state.cv_text = st.text_area("Live Database Field Editor", value=st.session_state.cv_text, height=400)
     active_payload = st.session_state.cv_text
@@ -241,13 +238,12 @@ else:
 # ========== STABLE RENDERING CANVAS WORKAROUND ==========
 st.markdown("### 🖥️ Native Live Sandbox Preview")
 
-# Constructing native Streamlit columns to guarantee UI rendering structure remains bulletproof
 preview_box = st.container(border=True)
 with preview_box:
     col_logo, col_bio = st.columns([1, 4])
     with col_logo:
         st.image(SRC_LOGO, width=100)
-    with col_col2 := col_bio:
+    with col_bio:
         st.markdown(f"""
         <div style="text-align: right; font-family: 'Segoe UI', sans-serif; background-color: {heading_color}; padding: 20px; border-radius: 8px; color: white;">
             <h1 style="margin:0; color:white; font-size:26px;">GESNER DESLANDES</h1>
