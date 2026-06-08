@@ -48,7 +48,7 @@ B64_LOGO = base64.b64encode(LOGO_SVG.encode('utf-8')).decode('utf-8')
 SRC_LOGO = f"data:image/svg+xml;base64,{B64_LOGO}"
 st.logo(SRC_LOGO)
 
-# ========== TEMPLATES (same as before) ==========
+# ========== TEMPLATES ==========
 def get_cv_template():
     return """PROFESSIONAL SUMMARY
 Results‑driven Senior Software Architect with 4+ years of experience designing, building, and deploying 37 custom enterprise and AI applications for global clients. Expert in Python ecosystem, Streamlit engineering, advanced AI integration (Groq Llama 3.1), real‑time distributed systems, and cloud architecture. Proven ability to lead full‑cycle product engineering from baseline requirements to scalable cloud production. Fluent in English, French, Spanish, Haitian Creole.
@@ -181,7 +181,7 @@ Engineer‑in‑Chief, GlobalInternet.py
 (509) 4738 5663 | deslandes78@gmail.com
 """
 
-# ========== THEME PRESETS (gradients and solid colours) ==========
+# ========== THEME PRESETS ==========
 BACKGROUND_PRESETS = {
     "CV (Resume)": "#ffffff",
     "SWOT Analysis": "linear-gradient(135deg, #e2e2e2 0%, #c9d6ff 100%)",
@@ -230,25 +230,20 @@ with st.sidebar:
         st.session_state.last_doc_type = doc_type
         st.rerun()
     
-    # Background mode: preset or custom colour
     bg_mode = st.radio("Background mode", ["Preset Theme", "Custom Colour"], index=0)
     
     if bg_mode == "Preset Theme":
         bg_css = BACKGROUND_PRESETS[doc_type]
     else:
-        # Use a solid colour picker (start with white as fallback)
         default_solid = "#ffffff" if "gradient" in str(BACKGROUND_PRESETS[doc_type]) else BACKGROUND_PRESETS[doc_type]
         bg_css = st.color_picker("Custom Background Colour", default_solid)
     
     header_color = st.color_picker("Primary Header Shield", HEADER_COLOR_PRESETS[doc_type])
-    
-    # Auto text colour option
     auto_text = st.checkbox("Auto Text Color (based on background)", value=True)
     
     if auto_text:
-        # Only works if bg_css is a solid colour; for gradients we default to dark text
         if bg_css.startswith("linear-gradient"):
-            text_color = "#1a2a3a"  # dark grey for gradients
+            text_color = "#1a2a3a"
         else:
             luminance = get_luminance(bg_css)
             text_color = "#ffffff" if luminance < 0.5 else "#1a2a3a"
@@ -261,8 +256,9 @@ with st.sidebar:
 def build_html_document(title, body_text, bg, text_col, heading_col, font, for_pdf=False):
     escaped_body = body_text.replace("\n", "<br>")
     
+    # STRUCTURAL PROTECTION: table-layout: fixed + full dimension containment
     header_html = f"""
-    <div style="background-color: {heading_col}; padding: 24px; border-radius: 12px; margin-bottom: 30px; display: table; width: 100%; box-sizing: border-box;">
+    <div style="background-color: {heading_col}; padding: 24px; border-radius: 12px; margin-bottom: 30px; display: table; width: 100%; box-sizing: border-box; table-layout: fixed;">
         <div style="display: table-cell; vertical-align: middle; width: 100px;">
             <img src="{SRC_LOGO}" width="85" height="100" style="display: block;">
         </div>
@@ -280,27 +276,29 @@ def build_html_document(title, body_text, bg, text_col, heading_col, font, for_p
 <html>
 <head><meta charset="UTF-8"><title>{title}</title>
 <style>
+* {{ box-sizing: border-box; }}
 @page {{ size: Letter; margin: {page_margin}; }}
-body {{ margin: 0; padding: 0; background: {bg}; }}
-.document-content {{ background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 0; }}
+body {{ margin: 0; padding: 0; background: {bg}; width: 100%; }}
+.document-content {{ background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 0; width: 100%; word-wrap: break-word; }}
 h2, h3, h4 {{ color: {heading_col}; }}
 hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
 </style>
 </head>
-<body><div class="document-content">{header_html}<div style="font-size: 11pt; line-height: 1.5;">{escaped_body}</div></div></body>
+<body><div class="document-content">{header_html}<div style="font-size: 11pt; line-height: 1.5; width: 100%; box-sizing: border-box;">{escaped_body}</div></div></body>
 </html>"""
     else:
         return f"""<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><title>{title}</title>
 <style>
+* {{ box-sizing: border-box; }}
 body {{ margin: 20px; background: #f0f2f6; }}
-.document-card {{ background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 30px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }}
+.document-card {{ background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 30px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); max-width: 100%; }}
 h2, h3, h4 {{ color: {heading_col}; }}
 hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
 </style>
 </head>
-<body><div class="document-card">{header_html}<div>{escaped_body}</div></div></body>
+<body><div class="document-card">{header_html}<div style="width: 100%; box-sizing: border-box;">{escaped_body}</div></div></body>
 </html>"""
 
 # ========== EDITOR & PREVIEW ==========
@@ -320,7 +318,7 @@ else:
     active_payload = st.session_state.cover_text
 
 st.markdown("### 🖥️ Native Live Sandbox Preview")
-st.markdown(f"<div style='background: {bg_css}; padding: 30px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd;'>", unsafe_allow_html=True)
+st.markdown(f"<div style='background: {bg_css}; padding: 30px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd; box-sizing: border-box; max-width: 100%;'>", unsafe_allow_html=True)
 
 col_logo, col_bio = st.columns([1, 4])
 with col_logo:
@@ -335,7 +333,7 @@ with col_bio:
     """, unsafe_allow_html=True)
 
 st.markdown("---")
-st.markdown(f"<div style='color: {text_color}; font-family: {font_family}; white-space: pre-wrap;'>{active_payload}</div>", unsafe_allow_html=True)
+st.markdown(f"<div style='color: {text_color}; font-family: {font_family}; white-space: pre-wrap; word-wrap: break-word; max-width: 100%;'>{active_payload}</div>", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
 
 # ========== PDF EXPORT ==========
