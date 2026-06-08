@@ -16,12 +16,6 @@ st.markdown("""
 <style>
     .stApp { background-color: #f0f2f6; }
     .stButton>button { background-color: #2c7be5; color: white; border-radius: 25px; width: 100%; }
-    .header-box {
-        padding: 25px;
-        border-radius: 12px;
-        color: white;
-        margin-bottom: 25px;
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -51,10 +45,9 @@ LOGO_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 115" widt
 
 B64_LOGO = base64.b64encode(LOGO_SVG.encode('utf-8')).decode('utf-8')
 SRC_LOGO = f"data:image/svg+xml;base64,{B64_LOGO}"
-
 st.logo(SRC_LOGO)
 
-# ========== DATA CACHE TEMPLATES ==========
+# ========== UPDATED CV TEMPLATE (your new text) ==========
 def get_cv_template():
     return """PROFESSIONAL SUMMARY
 Results‑driven Senior Software Architect with 4+ years of experience designing, building, and deploying 37 custom enterprise and AI applications for global clients. Expert in Python ecosystem, Streamlit engineering, advanced AI integration (Groq Llama 3.1), real‑time distributed systems, and cloud architecture. Proven ability to lead full‑cycle product engineering from baseline requirements to scalable cloud production. Fluent in English, French, Spanish, Haitian Creole.
@@ -187,7 +180,7 @@ Engineer‑in‑Chief, GlobalInternet.py
 (509) 4738 5663 | deslandes78@gmail.com
 """
 
-# ========== THEME PRESETS (matching your architectural requirements) ==========
+# ========== THEME PRESETS ==========
 BACKGROUND_PRESETS = {
     "CV (Resume)": "#ffffff",
     "SWOT Analysis": "linear-gradient(135deg, #e2e2e2 0%, #c9d6ff 100%)",
@@ -202,7 +195,7 @@ HEADER_COLOR_PRESETS = {
     "Cover Letter": "#0f766e"
 }
 
-# ========== INITIALIZE PERSISTENT REPOSITORY STATE ==========
+# ========== INITIALISE SESSION STATE ==========
 if "cv_text" not in st.session_state:
     st.session_state.cv_text = get_cv_template()
 if "swot_text" not in st.session_state:
@@ -214,7 +207,7 @@ if "cover_text" not in st.session_state:
 if "last_doc_type" not in st.session_state:
     st.session_state.last_doc_type = "CV (Resume)"
 
-# ========== CONTROL CENTER SIDEBAR ==========
+# ========== SIDEBAR ==========
 with st.sidebar:
     st.title("💼 Workspace Controller")
     doc_type = st.radio("Selected Focus Target:", ["CV (Resume)", "SWOT Analysis", "Executive Bio", "Cover Letter"])
@@ -222,21 +215,18 @@ with st.sidebar:
     st.markdown("---")
     st.subheader("🎨 Profile Themes")
     
-    # Apply presets dynamically – reset color pickers only when document type changes
     if doc_type != st.session_state.last_doc_type:
-        # Force rerun to refresh the color pickers with new defaults
         st.session_state.last_doc_type = doc_type
         st.rerun()
     
     bg_css = BACKGROUND_PRESETS[doc_type]
     header_assigned_color = HEADER_COLOR_PRESETS[doc_type]
     
-    # Color pickers with dynamic default values (will reset when doc_type changes due to rerun)
     text_color = st.color_picker("Body Text Ink", "#1a2a3a")
     heading_color = st.color_picker("Primary Header Shield", header_assigned_color)
     font_family = st.selectbox("Typography Family", ["Segoe UI", "Arial", "Georgia", "Roboto"], index=0)
 
-# ========== COMPILER CORE ENGINE ==========
+# ========== HTML GENERATOR ==========
 def build_html_document(title, body_text, bg, text_col, heading_col, font, for_pdf=False):
     escaped_body = body_text.replace("\n", "<br>")
     
@@ -254,57 +244,35 @@ def build_html_document(title, body_text, bg, text_col, heading_col, font, for_p
     """
     
     if for_pdf:
-        # PDF specific styles: use the same background, proper page margins
         page_margin = "1.5cm"
-        container_style = f"background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 0;"
         return f"""<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>{title}</title>
-    <style>
-        @page {{ size: Letter; margin: {page_margin}; }}
-        body {{ margin: 0; padding: 0; background: {bg}; }}
-        .document-content {{ {container_style} }}
-        h2, h3, h4 {{ color: {heading_col}; }}
-        hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
-    </style>
+<head><meta charset="UTF-8"><title>{title}</title>
+<style>
+@page {{ size: Letter; margin: {page_margin}; }}
+body {{ margin: 0; padding: 0; background: {bg}; }}
+.document-content {{ background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 0; }}
+h2, h3, h4 {{ color: {heading_col}; }}
+hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
+</style>
 </head>
-<body>
-    <div class="document-content">
-        {header_html}
-        <div style="font-size: 11pt; line-height: 1.5;">
-            {escaped_body}
-        </div>
-    </div>
-</body>
+<body><div class="document-content">{header_html}<div style="font-size: 11pt; line-height: 1.5;">{escaped_body}</div></div></body>
 </html>"""
     else:
-        # Live preview styles (with card effect for better visibility)
-        container_style = f"background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 30px; border-radius: 16px;"
         return f"""<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>{title}</title>
-    <style>
-        body {{ margin: 0; padding: 20px; background: #f0f2f6; }}
-        .document-card {{ {container_style} box-shadow: 0 8px 20px rgba(0,0,0,0.1); }}
-        h2, h3, h4 {{ color: {heading_col}; }}
-        hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
-    </style>
+<head><meta charset="UTF-8"><title>{title}</title>
+<style>
+body {{ margin: 20px; background: #f0f2f6; }}
+.document-card {{ background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 30px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }}
+h2, h3, h4 {{ color: {heading_col}; }}
+hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
+</style>
 </head>
-<body>
-    <div class="document-card">
-        {header_html}
-        <div>
-            {escaped_body}
-        </div>
-    </div>
-</body>
+<body><div class="document-card">{header_html}<div>{escaped_body}</div></div></body>
 </html>"""
 
-# ========== PRODUCTION WORKSPACE INTERFACE ==========
+# ========== EDITOR & PREVIEW ==========
 st.subheader(f"📝 Content Control Engine: {doc_type}")
 
 if doc_type == "CV (Resume)":
@@ -320,13 +288,8 @@ else:
     st.session_state.cover_text = st.text_area("Live Database Field Editor", value=st.session_state.cover_text, height=400)
     active_payload = st.session_state.cover_text
 
-# ========== STABLE RENDERING CANVAS WORKAROUND ==========
 st.markdown("### 🖥️ Native Live Sandbox Preview")
-
-# Use a temporary container with the same background as the selected canvas
-st.markdown(f"""
-<div style="background: {bg_css}; padding: 30px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd;">
-""", unsafe_allow_html=True)
+st.markdown(f"<div style='background: {bg_css}; padding: 30px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd;'>", unsafe_allow_html=True)
 
 col_logo, col_bio = st.columns([1, 4])
 with col_logo:
@@ -344,12 +307,10 @@ st.markdown("---")
 st.markdown(f"<div style='color: {text_color}; font-family: {font_family}; white-space: pre-wrap;'>{active_payload}</div>", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
 
-# ========== EXPORT PIPELINE DISTRIBUTION ==========
+# ========== PDF EXPORT ==========
 st.markdown("### 📥 Document Asset Distribution Channel")
-
 live_pdf_html = build_html_document(doc_type, active_payload, bg_css, text_color, heading_color, font_family, for_pdf=True)
 pdf_export_bytes = HTML(string=live_pdf_html).write_pdf()
-
 st.download_button(
     label=f"🏆 Compile & Export {doc_type} to PDF Sheet",
     data=pdf_export_bytes,
