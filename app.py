@@ -1,4 +1,8 @@
 import streamlit as st
+import zipfile
+import io
+import base64
+from datetime import datetime
 
 st.set_page_config(
     page_title="Document Refiner Pro | GlobalInternet.py",
@@ -8,171 +12,150 @@ st.set_page_config(
 
 st.markdown("""
 <style>
-    .stApp {
-        background-color: #f0f2f6;
-    }
-    .preview-box {
-        background-color: white;
-        border-radius: 15px;
-        padding: 2rem;
-        margin-top: 1rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    .stButton>button {
-        background-color: #2c7be5;
-        color: white;
-        border-radius: 25px;
-    }
+    .stApp { background-color: #f0f2f6; }
+    .stButton>button { background-color: #2c7be5; color: white; border-radius: 25px; width: 100%; }
+    .preview-container { background: white; border-radius: 15px; padding: 1rem; margin-top: 1rem; }
 </style>
 """, unsafe_allow_html=True)
 
-# ========== INITIAL CONTENT (your refined documents) ==========
-default_cv = """Gesner Deslandes
-deslandes78@gmail.com | +509 4738 5663 | Haiti | DOB: 20/11/79
+# ========== PROFESSIONAL TEMPLATES (senior‑level) ==========
+def get_cv_template():
+    return """Gesner Deslandes
+deslandes78@gmail.com | +509 4738 5663 | Haiti
 
-Software Builder | Python Developer | AI Enthusiast | Technology Coordinator
+SOFTWARE ARCHITECT & AI SOLUTIONS ENGINEER
 
-Professional Objective
+PROFESSIONAL SUMMARY
 
-Seeking a partnership or client‑facing role where technical expertise and relationship management intersect. Open to collaborating with global companies to deliver high‑value solutions, bridge technical delivery with client success, and contribute to business growth. Available for remote work and willing to travel when required.
+Results‑driven Software Architect with 4+ years of experience designing, building, and deploying 37 custom applications for global clients. Expert in Python, Streamlit, AI integration (Groq Llama 3.1), real‑time systems, and cloud deployment. Proven ability to lead full‑cycle product development, from requirements to deployment. Fluent in English, French, Spanish, Haitian Creole.
 
-Exceptionally driven leader and manager with over 4 years of experience building custom Python software for international clients. Proven ability to learn quickly, solve complex problems, and deliver production‑ready applications.
+CORE COMPETENCIES
 
-Technical Skills
+- System Architecture: Real‑time data pipelines, observability platforms, API design
+- AI & Machine Learning: LLM integration, prompt engineering, anomaly detection
+- Full‑Stack Development: Python, Streamlit, Pandas, Plotly, REST APIs
+- Cloud & DevOps: Streamlit Cloud, GitHub, secrets management, CI/CD concepts
+- Multilingual Solutions: English, French, Spanish UI and AI voice synthesis
 
-Languages: Python (advanced), JavaScript, HTML/CSS, SQL
-Frameworks & Libraries: Streamlit, TensorFlow, OpenCV, Pygame, Pandas, NumPy
-Tools & Platforms: Git, GitHub, Supabase, VS Code, Linux, Windows
-Areas: Web applications, AI/ML models, automation, data dashboards, educational software, hardware integration, self‑driving simulations
-Other: Full‑cycle software development (requirements → deployment), API integration, database design, technical documentation
+KEY PROJECTS
 
-Professional Experience
+System Health AI Monitor | Architect & Creator
+Live: https://system-health-ai-monitor-important-9bemdyosmbfmtx4t8wygbv.streamlit.app/
+- Designed and deployed a real‑time observability tool that simulates server metrics, detects anomalies, and provides AI‑powered predictive insights using Groq Llama 3.1.
+- Integrated multilingual UI (English, French, Spanish) and AI voice explanation using edge‑tts.
 
-GlobalInternet.py – Founder, Owner & Director – Python Software Builder
-2021 – Present
-- Built and delivered 37 custom Python applications to clients worldwide (see portfolio).
-- Developed AI‑powered solutions including chatbots, image classifiers, and medical literature assistants.
-- Created full‑stack web applications (voting systems, school management, business dashboards).
-- Designed educational software with audio support and multi‑language interfaces.
-- Wrote clean, maintainable code; managed version control with Git/GitHub.
-- Deployed apps on Streamlit Cloud; integrated Supabase for real‑time features.
+SafeHaven – Anti‑Trafficking AI | Lead Developer
+Live: https://call-for-code-ai-global-challenge-2026-jimupcwzzyntghxdwxpbg9.streamlit.app/
+- Built an AI‑powered early warning system that analyzes user‑submitted situations, flags trafficking indicators, and provides anonymous reporting.
+- Used Groq LLM to generate risk assessments and actionable advice.
 
-Be Like Brit Orphanage – Haiti – Technology Coordinator
-2021 – Present
-- Manage IT infrastructure: laptops, tablets, Zoom meetings, daily technical support.
-- Troubleshoot hardware and software issues independently.
-- Ensure smooth digital operations for educational and administrative teams.
-- Transferable skills: problem‑solving, user support, system maintenance.
+Hospital Management System | Full‑Stack Developer
+Live: https://hospital-management-system-software-built-by-gesner-deslandes.streamlit.app/
+- Developed a complete hospital management suite with patient registration, EMR, billing, pharmacy, lab, radiology, and AI diagnostic assistant.
+- Integrated real‑time alerts and multilingual support.
 
-Interpreting Tourist Services – Haiti – CEO
-- Organized personalized tourism for NGOs and individuals.
-- Transferable skills: client communication, project management, logistics.
+PROFESSIONAL EXPERIENCE
 
-Additional Roles (transferable skills)
-- Accounting Assistant – Be Like Brit.org
-- Document Translator – United Kingdom Glossary & United States Work‑Rise Company
-- J/P Haitian Relief Organization – Fleet Manager / Dispatcher / Driver / Translator for Structural Engineering Team
-- International Medical Team – Driver and Pharmaceutical Assistant
-- International Child Care – Medical Interpreter
-- Can‑Do (NGO) – Team Leader and Interpreter
-- Printing Company – Driver
-- Be Like Brit – Secondary English Teacher (Preschool to NS4) – September 2020
+GlobalInternet.py – Founder & Engineer‑in‑Chief | 2021 – Present
+- Delivered 37 custom Python applications (voting systems, BI dashboards, AI chatbots, educational platforms, self‑driving car simulator).
+- Led all phases: client consultation, requirements gathering, architecture design, coding, deployment, and documentation.
+- Managed full‑stack development using Streamlit, Pandas, Plotly, and integrated third‑party APIs (Groq, edge‑tts).
+- Deployed applications on Streamlit Cloud; used GitHub for version control.
 
-Software Portfolio (37 Products – All Built with Python)
+Be Like Brit Orphanage – Technology Coordinator | 2021 – Present
+- Manage IT infrastructure (laptops, tablets, Zoom, daily support) for 50+ users.
+- Troubleshoot hardware/software issues independently.
 
-Full source code, documentation, and deployment guides included.
-View the complete portfolio: https://globalinternetsitepy-abh7v6tnmskxxnuplrdcgk.streamlit.app/
+EDUCATION & CERTIFICATIONS
 
-(Full list available upon request – over 37 applications from voting software to self‑driving car simulator.)
-
-Education & Training
-
-- Vocational Training School – American English
-- Diesel Institute of Haiti – Diesel Mechanic
-- Office Computing Certification (October 2000)
+- Self‑taught Software Engineer (continuous learning)
+- Vocational Training – American English
+- Office Computing Certification (2000)
 - High School Graduate
 
-Languages
+LANGUAGES
 
 - English – Professional working proficiency
 - French – Professional working proficiency
 - Spanish – Conversational
 - Haitian Creole – Native
 
-References
+REFERENCES
 
 - Teresa Lang Ehlert: tbtrekkin@gmail.com
 - Charles Zerr MD: +1 620 952 0074
 """
 
-default_swot = """Executive SWOT Analysis
+def get_swot_template():
+    return """Executive SWOT Analysis
 
 Prepared by: Gesner Deslandes
 Date: June 2026
-Purpose: Partnership / Client‑Facing Opportunities
+Purpose: Software Architect / Platform Engineer (Contract)
 
-Strengths (Internal)
+STRENGTHS (Internal)
 
-- Strong technical foundation in Python, WordPress, full‑stack development, and AI/ML.
-- Proven ability to build and deliver 37 custom software applications to global clients.
-- Direct client‑facing experience including requirements gathering, project management, and post‑delivery support.
-- Self‑motivated, organized, and effective in remote work environments.
+- Deep technical expertise in Python, full‑stack development, AI/LLM integration, and real‑time system design.
+- Proven track record: 37 custom applications delivered to global clients.
+- Direct client‑facing experience: requirements gathering, project management, post‑delivery support.
+- Self‑motivated, highly organised, and effective in fully remote environments.
 - Willing to travel when required.
 - Multilingual: English, French, Spanish, Haitian Creole.
-- Demonstrated leadership as founder of GlobalInternet.py and former team leader roles.
-- Fast learner and adaptable to new technologies.
+- Entrepreneurial mindset (founder of GlobalInternet.py) combined with hands‑on coding.
 
-Weaknesses (Internal)
+WEAKNESSES (Internal)
 
-- Limited experience in large corporate team structures.
-- No formal computer science degree (compensated by practical experience and portfolio).
-- Based in Haiti – potential time zone differences with USA and Canada.
-- Less exposure to enterprise‑level project management frameworks (e.g., Agile/Scrum certifications).
+- Limited experience in large corporate team structures (mostly solo projects).
+- No formal computer science degree (compensated by portfolio and practical results).
+- Based in Haiti – potential time zone differences with USA/Canada.
+- Lacks enterprise‑level Agile/Scrum certifications (actively learning).
 
-Opportunities (External)
+OPPORTUNITIES (External)
 
-- Leverage technical background into client‑facing partnership, customer success, or technical account management roles.
-- Grow within a structured organization with clear career progression.
-- Expand professional network in the USA and Canadian markets.
-- Use multilingual skills to support international clients.
-- Potential to transition from founder to a collaborative team environment that offers mentorship and resources.
+- Leverage technical background into a senior architecture or platform engineering role within a structured organisation.
+- Transition from founder to collaborative team environment offering mentorship and growth.
+- Expand professional network in North American and European markets.
+- Use multilingual skills to support international clients and cross‑border teams.
 
-Threats (External)
+THREATS (External)
 
-- Highly competitive job market for client‑facing tech roles.
-- Preference for candidates with local degrees or specific industry certifications.
-- Economic and political instability in Haiti may affect travel or visa processes.
-- Remote work may limit visibility compared to onsite candidates.
+- Competitive job market for senior tech roles.
+- Preference for candidates with local degrees or specific cloud certifications.
+- Economic and political situation in Haiti may affect travel or visa processes (fully remote is preferred).
 
-Conclusion
+CONCLUSION
 
-Gesner Deslandes brings a rare combination of technical depth and client‑centric experience. His strengths in Python development, AI solutions, and direct client communication are highly transferable to partnership or customer success roles. With the right opportunity and mentorship, he can deliver significant value to a forward‑looking organization.
+Gesner Deslandes brings a rare combination of software architecture skills, AI integration, and direct client success. His ability to deliver production‑ready systems end‑to‑end makes him a strong candidate for senior‑level contract roles. With the right opportunity and mentorship, he will deliver significant value.
 """
 
-default_bio = """Executive Bio
+def get_bio_template():
+    return """Executive Bio
 
-Prepared for: Marcy / Career Coach Marcy (Certified Career & Business Coach, Recruiter & HR Professional)
+Prepared for: Marcy / Career Coach Marcy
 Prepared by: Gesner Deslandes
 Date: June 2026
 
-Gesner Deslandes is the Founder, Owner, and Engineer‑in‑Chief of GlobalInternet.py, a software development company that builds custom Python and WordPress solutions for clients worldwide. With over four years of hands‑on experience, he has delivered 37 unique software products, including AI‑powered chatbots, secure voting systems, full‑stack web applications, educational platforms, and a self‑driving car simulator.
+Gesner Deslandes is the Founder, Owner, and Engineer‑in‑Chief of GlobalInternet.py, a software development company that builds custom Python and AI‑powered solutions for clients worldwide. With over four years of hands‑on experience, he has delivered 37 unique software products, including real‑time system health monitors, AI‑powered anti‑trafficking platforms, hospital management systems, and multilingual educational tools.
 
-His technical expertise spans Python, JavaScript, HTML/CSS, SQL, and frameworks such as Streamlit, TensorFlow, and Pandas. He is also proficient in WordPress development, including page builders like Elementor, WPBakery, and Gutenberg, as well as child theme customization. Gesner manages the full software development lifecycle – from client consultation to deployment and documentation – making him an effective bridge between technical delivery and client success.
+His technical expertise spans system architecture, full‑stack development (Python, Streamlit, Pandas, Plotly), AI integration (Groq Llama 3.1), cloud deployment (Streamlit Cloud, GitHub), and real‑time observability. He designs and builds end‑to‑end solutions that solve real problems – from anomaly detection to multilingual AI voice synthesis.
 
-Beyond coding, he has substantial client‑facing experience: communicating directly with international clients, gathering requirements, managing projects, and ensuring timely, quality delivery. His leadership background includes managing IT infrastructure at the Be Like Brit Orphanage, leading reconstruction teams as an NGO interpreter, and coordinating logistics as a fleet manager for the J/P Haitian Relief Organization.
+Beyond coding, Gesner has substantial client‑facing experience. He communicates directly with international clients, gathers requirements, manages projects, and ensures timely, quality delivery. His leadership background includes managing IT infrastructure at the Be Like Brit Orphanage, leading reconstruction teams as an NGO interpreter, and coordinating logistics for the J/P Haitian Relief Organization.
 
-Gesner is fluent in English, French, Spanish, and Haitian Creole. He is highly self‑motivated, organized, and proven to work effectively in remote environments. He is also willing to travel when necessary.
+Fluent in English, French, Spanish, and Haitian Creole, Gesner is highly self‑motivated, organised, and proven to work effectively in remote environments. He is also willing to travel when necessary.
 
-He is now seeking a partnership or client‑facing role where he can apply his unique combination of technical depth and relationship management to help an organization grow while continuing his own professional development.
+He is now seeking a contract Software Architect or Platform Engineer role where he can apply his unique combination of technical depth and product delivery to help organisations scale their systems efficiently.
 """
 
-default_cover = """Dear Hiring Team,
+def get_cover_template():
+    return """Dear Hiring Team,
 
 I am writing to express my strong interest in the Software Architect (Contract) role. With over four years of experience designing, building, and deploying 37 custom Python applications for global clients, I bring a rare combination of hands‑on system architecture, AI integration, and client‑facing delivery.
 
-My recent project – the System Health AI Monitor – demonstrates my ability to design real‑time observability tools that integrate AI for predictive anomaly detection. I have also built multilingual platforms, AI‑powered diagnostic assistants, and full‑stack web applications from concept to deployment.
+My recent project – the System Health AI Monitor – demonstrates my ability to design real‑time observability tools that integrate AI for predictive anomaly detection. It simulates server metrics, automatically alerts on anomalies, and uses Groq Llama 3.1 to provide actionable recommendations. This project showcases my architecture‑level thinking and full‑stack implementation.
 
-I am fully remote, available immediately, and willing to travel. I look forward to discussing how my architecture‑level thinking can add value to your team.
+I have also delivered AI‑powered anti‑trafficking platforms, hospital management systems with AI diagnostic assistants, and multilingual educational software. I manage the entire software lifecycle: requirements, architecture, coding, deployment, documentation, and client support.
+
+I am fully remote, available immediately, and willing to travel when required. I look forward to discussing how my experience in building scalable, AI‑enabled systems can add value to your engineering teams.
 
 Sincerely,
 Gesner Deslandes
@@ -184,13 +167,13 @@ Engineer‑in‑Chief, GlobalInternet.py
 if "doc_type" not in st.session_state:
     st.session_state.doc_type = "CV (Resume)"
 if "cv_text" not in st.session_state:
-    st.session_state.cv_text = default_cv
+    st.session_state.cv_text = get_cv_template()
 if "swot_text" not in st.session_state:
-    st.session_state.swot_text = default_swot
+    st.session_state.swot_text = get_swot_template()
 if "bio_text" not in st.session_state:
-    st.session_state.bio_text = default_bio
+    st.session_state.bio_text = get_bio_template()
 if "cover_text" not in st.session_state:
-    st.session_state.cover_text = default_cover
+    st.session_state.cover_text = get_cover_template()
 
 # ========== SIDEBAR ==========
 with st.sidebar:
@@ -200,7 +183,7 @@ with st.sidebar:
     st.session_state.doc_type = doc_type
     
     st.markdown("---")
-    st.subheader("🎨 Background Style (for the document sheet)")
+    st.subheader("🎨 Document Styling")
     bg_options = {
         "Sky Blue Gradient": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
         "Ocean Deep": "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)",
@@ -213,25 +196,97 @@ with st.sidebar:
     bg_css = bg_options[selected_bg]
     
     text_color = st.color_picker("Text Color", "#1a2a3a")
-    accent_color = st.color_picker("Heading Color", "#0a4c8c")
+    heading_color = st.color_picker("Heading Color", "#0a4c8c")
+    font_family = st.selectbox("Font Family", ["Segoe UI", "Arial", "Georgia", "Roboto", "Calibri"], index=0)
     
     st.markdown("---")
     st.caption("Built by Gesner Deslandes | GlobalInternet.py")
+    
+    # Download all as ZIP
+    if st.button("📦 Download All Documents as ZIP", use_container_width=True):
+        zip_buffer = io.BytesIO()
+        with zipfile.ZipFile(zip_buffer, "w") as zf:
+            for name, text in [("CV_Resume.html", st.session_state.cv_text),
+                               ("SWOT_Analysis.html", st.session_state.swot_text),
+                               ("Executive_Bio.html", st.session_state.bio_text),
+                               ("Cover_Letter.html", st.session_state.cover_text)]:
+                html_content = generate_html(name.replace(".html", ""), text, bg_css, text_color, heading_color, font_family)
+                zf.writestr(name, html_content)
+        zip_buffer.seek(0)
+        b64 = base64.b64encode(zip_buffer.read()).decode()
+        href = f'<a href="data:application/zip;base64,{b64}" download="refined_documents.zip">Click here to download ZIP</a>'
+        st.markdown(href, unsafe_allow_html=True)
+
+# ========== HELPER FUNCTION ==========
+def generate_html(title, content, bg, text_col, heading_col, font):
+    lines = content.split("\n")
+    # Convert plain text to HTML with <br> and preserve structure
+    html_content = "<br>".join([line.replace(" ", "&nbsp;") if line.strip() == "" else line for line in lines])
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>{title}</title>
+    <style>
+        body {{
+            margin: 0;
+            padding: 2rem;
+            background: #e6e9f0;
+            display: flex;
+            justify-content: center;
+            font-family: '{font}', sans-serif;
+        }}
+        .document {{
+            max-width: 1000px;
+            width: 100%;
+            background: {bg};
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            color: {text_col};
+        }}
+        h1, h2, h3, h4 {{
+            color: {heading_col};
+            margin-top: 1.2em;
+            margin-bottom: 0.5em;
+        }}
+        hr {{
+            margin: 1.5em 0;
+            border: 1px solid {heading_col};
+            opacity: 0.3;
+        }}
+        .footer {{
+            text-align: center;
+            margin-top: 2.5rem;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            border-top: 1px solid currentColor;
+            padding-top: 1rem;
+        }}
+    </style>
+</head>
+<body>
+    <div class="document">
+        {html_content}
+        <div class="footer">Refined by Gesner Deslandes – GlobalInternet.py</div>
+    </div>
+</body>
+</html>"""
 
 # ========== MAIN AREA ==========
 st.title(f"✍️ Edit & Preview: {st.session_state.doc_type}")
 
 # Editor
-edited_text = st.text_area("Edit your document here (plain text)", 
-                           value={
-                               "CV (Resume)": st.session_state.cv_text,
-                               "SWOT Analysis": st.session_state.swot_text,
-                               "Executive Bio": st.session_state.bio_text,
-                               "Cover Letter": st.session_state.cover_text
-                           }[st.session_state.doc_type],
-                           height=400)
+edited_text = st.text_area("Edit your document here (plain text – you can adjust any section)",
+                            value={
+                                "CV (Resume)": st.session_state.cv_text,
+                                "SWOT Analysis": st.session_state.swot_text,
+                                "Executive Bio": st.session_state.bio_text,
+                                "Cover Letter": st.session_state.cover_text
+                            }[st.session_state.doc_type],
+                            height=500)
 
-# Save edits back to session state
+# Save changes
 if st.session_state.doc_type == "CV (Resume)":
     st.session_state.cv_text = edited_text
 elif st.session_state.doc_type == "SWOT Analysis":
@@ -241,90 +296,18 @@ elif st.session_state.doc_type == "Executive Bio":
 else:
     st.session_state.cover_text = edited_text
 
-# ========== PREVIEW WITH BACKGROUND ON THE DOCUMENT SHEET ==========
-st.subheader("📄 Live Preview (Background applied to the document itself)")
-
-# Convert plain text to HTML with line breaks and preserve spacing
-html_content = edited_text.replace("\n", "<br>")
-
-preview_html = f"""
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <style>
-        * {{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }}
-        body {{
-            background-color: #e6e9f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 2rem;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }}
-        .document-sheet {{
-            max-width: 1000px;
-            width: 100%;
-            background: {bg_css};
-            border-radius: 20px;
-            padding: 3rem 2.5rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            color: {text_color};
-        }}
-        h1, h2, h3, h4 {{
-            color: {accent_color};
-            margin-top: 1.2em;
-            margin-bottom: 0.5em;
-        }}
-        hr {{
-            margin: 1.5em 0;
-            border: 1px solid {accent_color};
-            opacity: 0.3;
-        }}
-        p {{
-            line-height: 1.5;
-            margin-bottom: 1em;
-        }}
-        ul, ol {{
-            margin-left: 1.5em;
-            margin-bottom: 1em;
-        }}
-        .footer {{
-            text-align: center;
-            margin-top: 2.5rem;
-            font-size: 0.8rem;
-            color: {text_color};
-            opacity: 0.7;
-            border-top: 1px solid currentColor;
-            padding-top: 1rem;
-        }}
-    </style>
-</head>
-<body>
-    <div class="document-sheet">
-        {html_content}
-        <div class="footer">
-            Document refined by Gesner Deslandes – GlobalInternet.py
-        </div>
-    </div>
-</body>
-</html>
-"""
-
+# Live preview
+st.subheader("📄 Live Preview (Styled Document)")
+preview_html = generate_html(st.session_state.doc_type, edited_text, bg_css, text_color, heading_color, font_family)
 st.components.v1.html(preview_html, height=650, scrolling=True)
 
-# Download button
+# Download current document
 st.download_button(
-    label="📥 Download as HTML (then open in browser and print to PDF)",
+    label="📥 Download Current Document as HTML (Print to PDF)",
     data=preview_html,
     file_name=f"{st.session_state.doc_type.lower().replace(' ', '_')}_refined.html",
     mime="text/html",
     use_container_width=True
 )
 
-st.info("💡 Tip: After downloading, open the HTML file in your browser, press Ctrl+P (or Cmd+P) and choose 'Save as PDF' to get a professional PDF with the background fully visible.")
+st.info("💡 After downloading the HTML, open it in your browser, press Ctrl+P (or Cmd+P) and choose 'Save as PDF'. The background will be preserved.")
