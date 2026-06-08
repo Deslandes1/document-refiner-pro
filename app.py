@@ -1,14 +1,10 @@
 import streamlit as st
-from datetime import datetime
 
 st.set_page_config(
     page_title="Document Refiner Pro | GlobalInternet.py",
     page_icon="📄",
     layout="wide"
 )
-
-# ========== CUSTOM CSS for the preview (dynamic) ==========
-# We'll use a placeholder; actual styling will be injected in the preview.
 
 st.markdown("""
 <style>
@@ -204,7 +200,7 @@ with st.sidebar:
     st.session_state.doc_type = doc_type
     
     st.markdown("---")
-    st.subheader("🎨 Style Settings")
+    st.subheader("🎨 Background Style (for the document sheet)")
     bg_options = {
         "Sky Blue Gradient": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
         "Ocean Deep": "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)",
@@ -213,11 +209,12 @@ with st.sidebar:
         "Dark Elegant": "linear-gradient(135deg, #0f2027 0%, #203a43 100%)",
         "Clean White": "#ffffff"
     }
-    selected_bg = st.selectbox("Background Style", list(bg_options.keys()), index=0)
+    selected_bg = st.selectbox("Document Background", list(bg_options.keys()), index=0)
     bg_css = bg_options[selected_bg]
     
     text_color = st.color_picker("Text Color", "#1a2a3a")
-    accent_color = st.color_picker("Accent Color (headings)", "#0a4c8c")
+    accent_color = st.color_picker("Heading Color", "#0a4c8c")
+    
     st.markdown("---")
     st.caption("Built by Gesner Deslandes | GlobalInternet.py")
 
@@ -225,7 +222,7 @@ with st.sidebar:
 st.title(f"✍️ Edit & Preview: {st.session_state.doc_type}")
 
 # Editor
-edited_text = st.text_area("Edit your document here (plain text, you can format with simple markdown)", 
+edited_text = st.text_area("Edit your document here (plain text)", 
                            value={
                                "CV (Resume)": st.session_state.cv_text,
                                "SWOT Analysis": st.session_state.swot_text,
@@ -244,48 +241,73 @@ elif st.session_state.doc_type == "Executive Bio":
 else:
     st.session_state.cover_text = edited_text
 
-# Preview with live styling
-st.subheader("📄 Live Preview (Stylized)")
+# ========== PREVIEW WITH BACKGROUND ON THE DOCUMENT SHEET ==========
+st.subheader("📄 Live Preview (Background applied to the document itself)")
+
+# Convert plain text to HTML with line breaks and preserve spacing
+html_content = edited_text.replace("\n", "<br>")
+
 preview_html = f"""
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <style>
-        body {{
-            background: {bg_css};
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            padding: 2rem;
+        * {{
             margin: 0;
-            color: {text_color};
+            padding: 0;
+            box-sizing: border-box;
         }}
-        .document-container {{
-            max-width: 900px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.85);
-            border-radius: 20px;
+        body {{
+            background-color: #e6e9f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            backdrop-filter: blur(2px);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }}
+        .document-sheet {{
+            max-width: 1000px;
+            width: 100%;
+            background: {bg_css};
+            border-radius: 20px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            color: {text_color};
         }}
         h1, h2, h3, h4 {{
             color: {accent_color};
+            margin-top: 1.2em;
+            margin-bottom: 0.5em;
         }}
         hr {{
+            margin: 1.5em 0;
             border: 1px solid {accent_color};
+            opacity: 0.3;
+        }}
+        p {{
+            line-height: 1.5;
+            margin-bottom: 1em;
+        }}
+        ul, ol {{
+            margin-left: 1.5em;
+            margin-bottom: 1em;
         }}
         .footer {{
             text-align: center;
-            margin-top: 2rem;
+            margin-top: 2.5rem;
             font-size: 0.8rem;
             color: {text_color};
             opacity: 0.7;
+            border-top: 1px solid currentColor;
+            padding-top: 1rem;
         }}
     </style>
 </head>
 <body>
-    <div class="document-container">
-        {edited_text.replace(chr(10), '<br>')}
+    <div class="document-sheet">
+        {html_content}
         <div class="footer">
             Document refined by Gesner Deslandes – GlobalInternet.py
         </div>
@@ -294,7 +316,7 @@ preview_html = f"""
 </html>
 """
 
-st.components.v1.html(preview_html, height=600, scrolling=True)
+st.components.v1.html(preview_html, height=650, scrolling=True)
 
 # Download button
 st.download_button(
@@ -305,4 +327,4 @@ st.download_button(
     use_container_width=True
 )
 
-st.info("Tip: After downloading, open the HTML file in your browser, press Ctrl+P (or Cmd+P) and choose 'Save as PDF' to get a professional PDF document.")
+st.info("💡 Tip: After downloading, open the HTML file in your browser, press Ctrl+P (or Cmd+P) and choose 'Save as PDF' to get a professional PDF with the background fully visible.")
