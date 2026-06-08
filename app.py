@@ -17,7 +17,6 @@ st.markdown("""
     .stApp { background-color: #f0f2f6; }
     .stButton>button { background-color: #2c7be5; color: white; border-radius: 25px; width: 100%; }
     .header-box {
-        background-color: #0a4c8c;
         padding: 25px;
         border-radius: 12px;
         color: white;
@@ -53,7 +52,6 @@ LOGO_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 115" widt
 B64_LOGO = base64.b64encode(LOGO_SVG.encode('utf-8')).decode('utf-8')
 SRC_LOGO = f"data:image/svg+xml;base64,{B64_LOGO}"
 
-# Permanent Sidebar Identity Branding
 st.logo(SRC_LOGO)
 
 # ========== DATA CACHE TEMPLATES ==========
@@ -165,13 +163,17 @@ with st.sidebar:
     
     st.markdown("---")
     st.subheader("🎨 Profile Themes")
-    bg_options = {
-        "Clean White": "#ffffff",
-        "Mountain Mist": "linear-gradient(135deg, #e2e2e2 0%, #c9d6ff 100%)",
-        "Sky Blue Gradient": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+    
+    # SYSTEM BACKUP DEFINITIONS FOR ORIGINAL INDIVIDUAL CANVAS BACKGROUNDS
+    default_backgrounds = {
+        "CV (Resume)": "#ffffff",
+        "SWOT Analysis": "linear-gradient(135deg, #e2e2e2 0%, #c9d6ff 100%)",
+        "Executive Bio": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+        "Cover Letter": "#ffffff"
     }
-    selected_bg = st.selectbox("Document Canvas", list(bg_options.keys()), index=0)
-    bg_css = bg_options[selected_bg]
+    
+    # Initialize with default for target document type
+    bg_css = default_backgrounds[doc_type]
     
     text_color = st.color_picker("Body Text Ink", "#1a2a3a")
     heading_color = st.color_picker("Primary Header Shield", "#0a4c8c")
@@ -238,22 +240,26 @@ else:
 # ========== STABLE RENDERING CANVAS WORKAROUND ==========
 st.markdown("### 🖥️ Native Live Sandbox Preview")
 
-preview_box = st.container(border=True)
-with preview_box:
-    col_logo, col_bio = st.columns([1, 4])
-    with col_logo:
-        st.image(SRC_LOGO, width=100)
-    with col_bio:
-        st.markdown(f"""
-        <div style="text-align: right; font-family: 'Segoe UI', sans-serif; background-color: {heading_color}; padding: 20px; border-radius: 8px; color: white;">
-            <h1 style="margin:0; color:white; font-size:26px;">GESNER DESLANDES</h1>
-            <p style="margin:2px 0; color:#ffd700; font-weight:bold; font-size:14px;">SOFTWARE ARCHITECT & AI SOLUTIONS ENGINEER</p>
-            <p style="margin:0; color:#e0e0e0; font-size:12px;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    st.markdown(f"<div style='color: {text_color}; font-family: {font_family}; white-space: pre-wrap;'>{active_payload}</div>", unsafe_allow_html=True)
+# Dynamic live rendering container applying background colors seamlessly per file type
+st.markdown(f"""
+<div style="background: {bg_css}; padding: 30px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd;">
+""", unsafe_allow_html=True)
+
+col_logo, col_bio = st.columns([1, 4])
+with col_logo:
+    st.image(SRC_LOGO, width=100)
+with col_bio:
+    st.markdown(f"""
+    <div style="text-align: right; font-family: 'Segoe UI', sans-serif; background-color: {heading_color}; padding: 20px; border-radius: 8px; color: white;">
+        <h1 style="margin:0; color:white; font-size:26px;">GESNER DESLANDES</h1>
+        <p style="margin:2px 0; color:#ffd700; font-weight:bold; font-size:14px;">SOFTWARE ARCHITECT & AI SOLUTIONS ENGINEER</p>
+        <p style="margin:0; color:#e0e0e0; font-size:12px;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("---")
+st.markdown(f"<div style='color: {text_color}; font-family: {font_family}; white-space: pre-wrap;'>{active_payload}</div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
 # ========== EXPORT PIPELINE DISTRIBUTION ==========
 st.markdown("### 📥 Document Asset Distribution Channel")
