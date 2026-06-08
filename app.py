@@ -2,10 +2,12 @@ import streamlit as st
 import zipfile
 import io
 import base64
+import asyncio
+import tempfile
+import os
 from datetime import datetime
 from weasyprint import HTML
-import colorsys
-import traceback
+import edge_tts
 
 st.set_page_config(
     page_title="Document Refiner Pro | GLOBALINTERNET.PY",
@@ -13,13 +15,90 @@ st.set_page_config(
     layout="wide"
 )
 
-st.markdown("""
-<style>
-    .stApp { background-color: #f0f2f6; }
-    .stButton>button { background-color: #2c7be5; color: white; border-radius: 25px; width: 100%; }
-</style>
-""", unsafe_allow_html=True)
+# ========== LANGUAGE DICTIONARIES ==========
+TEXTS = {
+    "English": {
+        "title": "📄 Document Refiner Pro",
+        "workspace": "💼 Workspace Controller",
+        "focus": "Selected Focus Target:",
+        "theme": "🎨 Profile Themes",
+        "bg_mode": "Background mode",
+        "preset": "Preset Theme",
+        "custom_bg": "Custom Colour",
+        "header_shield": "Primary Header Shield",
+        "auto_text": "Auto Text Color (based on background)",
+        "body_text": "Body Text Ink",
+        "typography": "Typography Family",
+        "editor": "📝 Content Control Engine:",
+        "live_preview": "🖥️ Native Live Sandbox Preview",
+        "export": "📥 Document Asset Distribution Channel",
+        "export_btn": "🏆 Compile & Export {doc} to PDF Sheet",
+        "fallback_btn": "⬇️ Fallback Export {doc} (White Background)",
+        "read_btn": "🔊 Read this document aloud",
+        "explain_btn": "🎙️ App Explanation",
+        "explain_title": "How Document Refiner Pro works",
+        "explain_text_en": "Document Refiner Pro allows you to edit and style professional documents (CV, SWOT Analysis, Executive Bio, Cover Letter). You can change background color, header shield color, text color, and font. The live preview updates instantly. Then you can download a polished PDF. This tool uses WeasyPrint for PDF generation and edge-tts for AI voice reading.",
+        "explain_text_fr": "Document Refiner Pro vous permet d'éditer et de styliser des documents professionnels (CV, analyse SWOT, biographie, lettre de motivation). Vous pouvez changer la couleur de fond, la couleur de l'en‑tête, la couleur du texte et la police. L'aperçu en direct se met à jour instantanément. Vous pouvez ensuite télécharger un PDF soigné. Cet outil utilise WeasyPrint pour la génération de PDF et edge-tts pour la lecture vocale IA.",
+        "explain_text_es": "Document Refiner Pro le permite editar y diseñar documentos profesionales (CV, análisis FODA, biografía ejecutiva, carta de presentación). Puede cambiar el color de fondo, el color del encabezado, el color del texto y la fuente. La vista previa en vivo se actualiza al instante. Luego puede descargar un PDF pulido. Esta herramienta utiliza WeasyPrint para generar PDF y edge-tts para lectura por voz IA."
+    },
+    "French": {
+        "title": "📄 Document Refiner Pro",
+        "workspace": "💼 Contrôleur de l'espace de travail",
+        "focus": "Cible sélectionnée :",
+        "theme": "🎨 Thèmes de profil",
+        "bg_mode": "Mode d'arrière‑plan",
+        "preset": "Thème prédéfini",
+        "custom_bg": "Couleur personnalisée",
+        "header_shield": "Couleur de l'en‑tête",
+        "auto_text": "Couleur automatique (selon fond)",
+        "body_text": "Couleur du texte",
+        "typography": "Famille de polices",
+        "editor": "📝 Moteur d'édition :",
+        "live_preview": "🖥️ Aperçu en direct",
+        "export": "📥 Canal de distribution",
+        "export_btn": "🏆 Générer et exporter {doc} en PDF",
+        "fallback_btn": "⬇️ Export de secours {doc} (fond blanc)",
+        "read_btn": "🔊 Lire ce document à voix haute",
+        "explain_btn": "🎙️ Explication de l'application",
+        "explain_title": "Comment fonctionne Document Refiner Pro",
+        "explain_text_en": "Document Refiner Pro vous permet d'éditer et de styliser des documents professionnels...",
+        "explain_text_fr": "Document Refiner Pro vous permet d'éditer et de styliser des documents professionnels (CV, analyse SWOT, biographie, lettre de motivation). Vous pouvez changer la couleur de fond, la couleur de l'en‑tête, la couleur du texte et la police. L'aperçu en direct se met à jour instantanément. Vous pouvez ensuite télécharger un PDF soigné. Cet outil utilise WeasyPrint pour la génération de PDF et edge-tts pour la lecture vocale IA.",
+        "explain_text_es": "Document Refiner Pro le permite editar y diseñar documentos profesionales..."
+    },
+    "Spanish": {
+        "title": "📄 Document Refiner Pro",
+        "workspace": "💼 Controlador del espacio de trabajo",
+        "focus": "Objetivo seleccionado:",
+        "theme": "🎨 Temas de perfil",
+        "bg_mode": "Modo de fondo",
+        "preset": "Tema predefinido",
+        "custom_bg": "Color personalizado",
+        "header_shield": "Color del encabezado",
+        "auto_text": "Color automático (según fondo)",
+        "body_text": "Color del texto",
+        "typography": "Familia de fuentes",
+        "editor": "📝 Editor de contenido:",
+        "live_preview": "🖥️ Vista previa en vivo",
+        "export": "📥 Canal de distribución",
+        "export_btn": "🏆 Compilar y exportar {doc} a PDF",
+        "fallback_btn": "⬇️ Exportación de respaldo {doc} (fondo blanco)",
+        "read_btn": "🔊 Leer este documento en voz alta",
+        "explain_btn": "🎙️ Explicación de la aplicación",
+        "explain_title": "Cómo funciona Document Refiner Pro",
+        "explain_text_en": "Document Refiner Pro le permite editar y diseñar documentos profesionales...",
+        "explain_text_fr": "Document Refiner Pro vous permet d'éditer et de styliser des documents professionnels...",
+        "explain_text_es": "Document Refiner Pro le permite editar y diseñar documentos profesionales (CV, análisis FODA, biografía ejecutiva, carta de presentación). Puede cambiar el color de fondo, el color del encabezado, el color del texto y la fuente. La vista previa en vivo se actualiza al instante. Luego puede descargar un PDF pulido. Esta herramienta utiliza WeasyPrint para generar PDF y edge-tts para lectura por voz IA."
+    }
+}
 
+# ========== VOICE MAPPING ==========
+VOICE_MAP = {
+    "English": "en-US-JennyNeural",
+    "French": "fr-FR-DeniseNeural",
+    "Spanish": "es-ES-ElviraNeural"
+}
+
+# ========== LOGO ==========
 LOGO_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 115" width="90" height="105">
     <g transform="translate(0, 15)">
         <circle cx="50" cy="50" r="45" fill="none" stroke="#90e0ef" stroke-width="2" opacity="0.6"/>
@@ -42,12 +121,11 @@ LOGO_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 115" widt
         <text x="84" y="14" font-size="12" text-anchor="middle">★</text>
     </g>
 </svg>"""
-
 B64_LOGO = base64.b64encode(LOGO_SVG.encode('utf-8')).decode('utf-8')
 SRC_LOGO = f"data:image/svg+xml;base64,{B64_LOGO}"
 st.logo(SRC_LOGO)
 
-# ========== TEMPLATES ==========
+# ========== TEMPLATES (unchanged) ==========
 def get_cv_template():
     return """PROFESSIONAL SUMMARY
 Results‑driven Senior Software Architect with 4+ years of experience designing, building, and deploying 37 custom enterprise and AI applications for global clients. Expert in Python ecosystem, Streamlit engineering, advanced AI integration (Groq Llama 3.1), real‑time distributed systems, and cloud architecture. Proven ability to lead full‑cycle product engineering from baseline requirements to scalable cloud production. Fluent in English, French, Spanish, Haitian Creole.
@@ -180,21 +258,13 @@ Engineer‑in‑Chief, GlobalInternet.py
 (509) 4738 5663 | deslandes78@gmail.com
 """
 
-# ========== FALLBACK FOR BIO: use safe solid background ==========
-def get_safe_background(doc_type, user_bg):
-    # If it's the bio document and the user hasn't overridden to custom colour, use a safe solid white
-    if doc_type == "Executive Bio" and not user_bg:
-        return "#ffffff"
-    return user_bg
-
 # ========== PRESETS ==========
 BACKGROUND_PRESETS = {
     "CV (Resume)": "#ffffff",
     "SWOT Analysis": "linear-gradient(135deg, #e2e2e2 0%, #c9d6ff 100%)",
-    "Executive Bio": "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)",
+    "Executive Bio": "#ffffff",
     "Cover Letter": "#ffffff"
 }
-
 HEADER_COLOR_PRESETS = {
     "CV (Resume)": "#0a4c8c",
     "SWOT Analysis": "#1e293b",
@@ -202,7 +272,7 @@ HEADER_COLOR_PRESETS = {
     "Cover Letter": "#0f766e"
 }
 
-# ========== HELPER ==========
+# ========== HELPERS ==========
 def get_luminance(hex_color):
     hex_color = hex_color.lstrip('#')
     if len(hex_color) != 6:
@@ -212,7 +282,24 @@ def get_luminance(hex_color):
     b = int(hex_color[4:6], 16) / 255.0
     return 0.299 * r + 0.587 * g + 0.114 * b
 
-# ========== INIT SESSION ==========
+async def text_to_speech(text, voice, output_path):
+    comm = edge_tts.Communicate(text, voice)
+    await comm.save(output_path)
+
+def generate_audio(text, lang):
+    voice = VOICE_MAP.get(lang, "en-US-JennyNeural")
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
+        tmp_path = tmp.name
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(text_to_speech(text, voice, tmp_path))
+    loop.close()
+    with open(tmp_path, "rb") as f:
+        audio_bytes = f.read()
+    os.unlink(tmp_path)
+    return audio_bytes
+
+# ========== SESSION STATE ==========
 if "cv_text" not in st.session_state:
     st.session_state.cv_text = get_cv_template()
 if "swot_text" not in st.session_state:
@@ -223,51 +310,101 @@ if "cover_text" not in st.session_state:
     st.session_state.cover_text = get_cover_body_template()
 if "last_doc_type" not in st.session_state:
     st.session_state.last_doc_type = "CV (Resume)"
+if "lang" not in st.session_state:
+    st.session_state.lang = "English"
 
 # ========== SIDEBAR ==========
 with st.sidebar:
-    st.title("💼 Workspace Controller")
-    doc_type = st.radio("Selected Focus Target:", ["CV (Resume)", "SWOT Analysis", "Executive Bio", "Cover Letter"])
+    lang = st.selectbox("🌐 Language", ["English", "French", "Spanish"], key="lang_selector")
+    if lang != st.session_state.lang:
+        st.session_state.lang = lang
+        st.rerun()
+    texts = TEXTS[st.session_state.lang]
+    
+    st.title(texts["workspace"])
+    doc_type = st.radio(texts["focus"], ["CV (Resume)", "SWOT Analysis", "Executive Bio", "Cover Letter"])
     
     st.markdown("---")
-    st.subheader("🎨 Profile Themes")
+    st.subheader(texts["theme"])
     
     if doc_type != st.session_state.last_doc_type:
         st.session_state.last_doc_type = doc_type
         st.rerun()
     
-    bg_mode = st.radio("Background mode", ["Preset Theme", "Custom Colour"], index=0)
-    
-    if bg_mode == "Preset Theme":
+    bg_mode = st.radio(texts["bg_mode"], [texts["preset"], texts["custom_bg"]], index=0)
+    if bg_mode == texts["preset"]:
         bg_css = BACKGROUND_PRESETS[doc_type]
-        # Override for bio: use solid white to ensure PDF generation
-        if doc_type == "Executive Bio":
-            # Keep the preset gradient for live preview? But we want PDF to work.
-            # We'll use a solid colour for both preview and PDF for bio.
-            bg_css = "#ffffff"
     else:
         default_solid = "#ffffff"
-        bg_css = st.color_picker("Custom Background Colour", default_solid)
+        bg_css = st.color_picker(texts["custom_bg"], default_solid)
     
-    header_color = st.color_picker("Primary Header Shield", HEADER_COLOR_PRESETS[doc_type])
-    
-    auto_text = st.checkbox("Auto Text Color (based on background)", value=True)
-    
+    header_color = st.color_picker(texts["header_shield"], HEADER_COLOR_PRESETS[doc_type])
+    auto_text = st.checkbox(texts["auto_text"], value=True)
     if auto_text:
-        if bg_css.startswith("linear-gradient") or bg_css == "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)":
+        if bg_css.startswith("linear-gradient"):
             text_color = "#1a2a3a"
         else:
             luminance = get_luminance(bg_css)
             text_color = "#ffffff" if luminance < 0.5 else "#1a2a3a"
     else:
-        text_color = st.color_picker("Body Text Ink", "#1a2a3a")
+        text_color = st.color_picker(texts["body_text"], "#1a2a3a")
+    font_family = st.selectbox(texts["typography"], ["Segoe UI", "Arial", "Georgia", "Roboto"], index=0)
     
-    font_family = st.selectbox("Typography Family", ["Segoe UI", "Arial", "Georgia", "Roboto"], index=0)
+    st.markdown("---")
+    if st.button(texts["explain_btn"], use_container_width=True):
+        explanation = texts["explain_text_" + st.session_state.lang.split("_")[0][:2].lower()]
+        if not explanation:
+            explanation = texts["explain_text_en"]
+        audio_bytes = generate_audio(explanation, st.session_state.lang)
+        st.audio(audio_bytes, format="audio/mp3")
 
-# ========== HTML BUILDER ==========
+# ========== DOCUMENT EDITOR ==========
+st.subheader(texts["editor"].format(doc_type))
+
+if doc_type == "CV (Resume)":
+    st.session_state.cv_text = st.text_area("", value=st.session_state.cv_text, height=400)
+    active_payload = st.session_state.cv_text
+elif doc_type == "SWOT Analysis":
+    st.session_state.swot_text = st.text_area("", value=st.session_state.swot_text, height=400)
+    active_payload = st.session_state.swot_text
+elif doc_type == "Executive Bio":
+    st.session_state.bio_text = st.text_area("", value=st.session_state.bio_text, height=400)
+    active_payload = st.session_state.bio_text
+else:
+    st.session_state.cover_text = st.text_area("", value=st.session_state.cover_text, height=400)
+    active_payload = st.session_state.cover_text
+
+# Read document aloud button
+if st.button(texts["read_btn"]):
+    with st.spinner("Generating speech..."):
+        audio_bytes = generate_audio(active_payload, st.session_state.lang)
+        st.audio(audio_bytes, format="audio/mp3")
+
+# ========== PREVIEW ==========
+st.markdown(f"### {texts['live_preview']}")
+st.markdown(f"<div style='background: {bg_css}; padding: 30px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd;'>", unsafe_allow_html=True)
+
+col_logo, col_bio = st.columns([1, 4])
+with col_logo:
+    st.image(SRC_LOGO, width=100)
+with col_bio:
+    st.markdown(f"""
+    <div style="text-align: right; font-family: 'Segoe UI', sans-serif; background-color: {header_color}; padding: 20px; border-radius: 8px; color: white;">
+        <h1 style="margin:0; color:white; font-size:26px;">GESNER DESLANDES</h1>
+        <p style="margin:2px 0; color:#ffd700; font-weight:bold; font-size:14px;">SOFTWARE ARCHITECT & AI SOLUTIONS ENGINEER</p>
+        <p style="margin:0; color:#e0e0e0; font-size:12px;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("---")
+st.markdown(f"<div style='color: {text_color}; font-family: {font_family}; white-space: pre-wrap;'>{active_payload}</div>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
+
+# ========== PDF EXPORT ==========
+st.markdown(f"### {texts['export']}")
+
 def build_html_document(title, body_text, bg, text_col, heading_col, font, for_pdf=False):
     escaped_body = body_text.replace("\n", "<br>")
-    
     header_html = f"""
     <div style="background-color: {heading_col}; padding: 24px; border-radius: 12px; margin-bottom: 30px; display: table; width: 100%; box-sizing: border-box;">
         <div style="display: table-cell; vertical-align: middle; width: 100px;">
@@ -280,7 +417,6 @@ def build_html_document(title, body_text, bg, text_col, heading_col, font, for_p
         </div>
     </div>
     """
-    
     if for_pdf:
         page_margin = "1.5cm"
         return f"""<!DOCTYPE html>
@@ -310,64 +446,24 @@ hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
 <body><div class="document-card">{header_html}<div>{escaped_body}</div></div></body>
 </html>"""
 
-# ========== EDITOR ==========
-st.subheader(f"📝 Content Control Engine: {doc_type}")
-
-if doc_type == "CV (Resume)":
-    st.session_state.cv_text = st.text_area("Live Database Field Editor", value=st.session_state.cv_text, height=400)
-    active_payload = st.session_state.cv_text
-elif doc_type == "SWOT Analysis":
-    st.session_state.swot_text = st.text_area("Live Database Field Editor", value=st.session_state.swot_text, height=400)
-    active_payload = st.session_state.swot_text
-elif doc_type == "Executive Bio":
-    st.session_state.bio_text = st.text_area("Live Database Field Editor", value=st.session_state.bio_text, height=400)
-    active_payload = st.session_state.bio_text
-else:
-    st.session_state.cover_text = st.text_area("Live Database Field Editor", value=st.session_state.cover_text, height=400)
-    active_payload = st.session_state.cover_text
-
-st.markdown("### 🖥️ Native Live Sandbox Preview")
-st.markdown(f"<div style='background: {bg_css}; padding: 30px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd;'>", unsafe_allow_html=True)
-
-col_logo, col_bio = st.columns([1, 4])
-with col_logo:
-    st.image(SRC_LOGO, width=100)
-with col_bio:
-    st.markdown(f"""
-    <div style="text-align: right; font-family: 'Segoe UI', sans-serif; background-color: {header_color}; padding: 20px; border-radius: 8px; color: white;">
-        <h1 style="margin:0; color:white; font-size:26px;">GESNER DESLANDES</h1>
-        <p style="margin:2px 0; color:#ffd700; font-weight:bold; font-size:14px;">SOFTWARE ARCHITECT & AI SOLUTIONS ENGINEER</p>
-        <p style="margin:0; color:#e0e0e0; font-size:12px;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
-    </div>
-    """, unsafe_allow_html=True)
-
-st.markdown("---")
-st.markdown(f"<div style='color: {text_color}; font-family: {font_family}; white-space: pre-wrap;'>{active_payload}</div>", unsafe_allow_html=True)
-st.markdown("</div>", unsafe_allow_html=True)
-
-# ========== PDF EXPORT (with error handling) ==========
-st.markdown("### 📥 Document Asset Distribution Channel")
 try:
-    live_pdf_html = build_html_document(doc_type, active_payload, bg_css, text_color, header_color, font_family, for_pdf=True)
-    pdf_export_bytes = HTML(string=live_pdf_html).write_pdf()
+    pdf_html = build_html_document(doc_type, active_payload, bg_css, text_color, header_color, font_family, for_pdf=True)
+    pdf_bytes = HTML(string=pdf_html).write_pdf()
     st.download_button(
-        label=f"🏆 Compile & Export {doc_type} to PDF Sheet",
-        data=pdf_export_bytes,
+        label=texts["export_btn"].format(doc=doc_type),
+        data=pdf_bytes,
         file_name=f"gesner_deslandes_{doc_type.lower().replace(' ', '_')}.pdf",
         mime="application/pdf",
         use_container_width=True
     )
 except Exception as e:
-    st.error(f"PDF generation failed: {str(e)}")
-    st.info("Attempting fallback: using solid white background for this export.")
-    # Fallback: use solid white background and black text
-    fallback_bg = "#ffffff"
-    fallback_text = "#1a2a3a"
-    fallback_html = build_html_document(doc_type, active_payload, fallback_bg, fallback_text, header_color, font_family, for_pdf=True)
-    fallback_pdf = HTML(string=fallback_html).write_pdf()
+    st.error(f"PDF error: {e}")
+    # Fallback with white background
+    fallback_html = build_html_document(doc_type, active_payload, "#ffffff", "#1a2a3a", header_color, font_family, for_pdf=True)
+    fallback_bytes = HTML(string=fallback_html).write_pdf()
     st.download_button(
-        label=f"⬇️ Fallback Export {doc_type} (White Background)",
-        data=fallback_pdf,
+        label=texts["fallback_btn"].format(doc=doc_type),
+        data=fallback_bytes,
         file_name=f"gesner_deslandes_{doc_type.lower().replace(' ', '_')}_fallback.pdf",
         mime="application/pdf",
         use_container_width=True
