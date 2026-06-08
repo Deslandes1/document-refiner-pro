@@ -18,7 +18,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ========== PROFESSIONAL TEMPLATES (same as before) ==========
+# ========== PROFESSIONAL TEMPLATES ==========
 def get_cv_template():
     return """Gesner Deslandes
 deslandes78@gmail.com | +509 4738 5663 | Haiti
@@ -240,36 +240,36 @@ def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=Fals
         html_content = "<br>".join([line if line.strip() == "" else line for line in lines])
     
     if pdf_mode:
-        # Full-page PDF: no extra padding, background covers entire sheet
+        # Full-page PDF style sheet handling background propagation cleanly
         style_extra = f"""
             @page {{
                 size: Letter;
                 margin: 1.5cm;
+                background: {bg};
             }}
             html, body {{
                 margin: 0;
                 padding: 0;
-                height: 100%;
-            }}
-            body {{
-                background: {bg};
+                background: transparent;
                 font-family: {font}, sans-serif;
                 color: {text_col};
             }}
             .document {{
                 width: 100%;
-                height: 100%;
+                margin: 0;
                 padding: 0;
-                background: inherit;
+                box-sizing: border-box;
+                word-wrap: break-word;
             }}
             h1, h2, h3, h4 {{
                 color: {heading_col};
                 margin-top: 1em;
                 margin-bottom: 0.5em;
+                page-break-after: avoid;
             }}
         """
     else:
-        # Screen preview: still with nice card effect
+        # Screen preview: card format retained
         style_extra = f"""
             body {{
                 margin: 0;
@@ -285,6 +285,7 @@ def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=Fals
                 padding: 3rem 2.5rem;
                 box-shadow: 0 20px 40px rgba(0,0,0,0.2);
                 color: {text_col};
+                word-wrap: break-word;
             }}
             h1, h2, h3, h4 {{
                 color: {heading_col};
@@ -343,16 +344,16 @@ st.subheader("📄 Live Preview")
 preview_html = generate_html(st.session_state.doc_type.replace(" ", "_"), edited_text, bg_css, text_color, heading_color, font_family, pdf_mode=False)
 st.components.v1.html(preview_html, height=650, scrolling=True)
 
-# Download current document as PDF (full‑page, no white background)
-if st.button("📥 Download Current Document as PDF", use_container_width=True):
-    pdf_html = generate_html(st.session_state.doc_type.replace(" ", "_"), edited_text, bg_css, text_color, heading_color, font_family, pdf_mode=True)
-    pdf_bytes = HTML(string=pdf_html).write_pdf()
-    st.download_button(
-        label="✅ Click to save PDF",
-        data=pdf_bytes,
-        file_name=f"{st.session_state.doc_type.lower().replace(' ', '_')}.pdf",
-        mime="application/pdf",
-        use_container_width=True
-    )
+# Compilation and Native Streamlit handling for Single Document Download
+pdf_html = generate_html(st.session_state.doc_type.replace(" ", "_"), edited_text, bg_css, text_color, heading_color, font_family, pdf_mode=True)
+pdf_bytes = HTML(string=pdf_html).write_pdf()
+
+st.download_button(
+    label="📥 Download Current Document as PDF",
+    data=pdf_bytes,
+    file_name=f"{st.session_state.doc_type.lower().replace(' ', '_')}.pdf",
+    mime="application/pdf",
+    use_container_width=True
+)
 
 st.info("💡 The PDF now fills the entire letter‑size sheet with the chosen background – no white margins or frames.")
