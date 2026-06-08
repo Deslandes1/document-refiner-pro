@@ -5,6 +5,7 @@ import base64
 from datetime import datetime
 from weasyprint import HTML
 import colorsys
+import traceback
 
 st.set_page_config(
     page_title="Document Refiner Pro | GLOBALINTERNET.PY",
@@ -12,7 +13,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# ========== SYSTEM ACCENT STYLING ==========
 st.markdown("""
 <style>
     .stApp { background-color: #f0f2f6; }
@@ -20,7 +20,6 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ========== FIXED EMBEDDED LOGO DATA ==========
 LOGO_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 115" width="90" height="105">
     <g transform="translate(0, 15)">
         <circle cx="50" cy="50" r="45" fill="none" stroke="#90e0ef" stroke-width="2" opacity="0.6"/>
@@ -181,7 +180,14 @@ Engineer‑in‑Chief, GlobalInternet.py
 (509) 4738 5663 | deslandes78@gmail.com
 """
 
-# ========== THEME PRESETS ==========
+# ========== FALLBACK FOR BIO: use safe solid background ==========
+def get_safe_background(doc_type, user_bg):
+    # If it's the bio document and the user hasn't overridden to custom colour, use a safe solid white
+    if doc_type == "Executive Bio" and not user_bg:
+        return "#ffffff"
+    return user_bg
+
+# ========== PRESETS ==========
 BACKGROUND_PRESETS = {
     "CV (Resume)": "#ffffff",
     "SWOT Analysis": "linear-gradient(135deg, #e2e2e2 0%, #c9d6ff 100%)",
@@ -196,7 +202,7 @@ HEADER_COLOR_PRESETS = {
     "Cover Letter": "#0f766e"
 }
 
-# ========== HELPER: luminance for auto text ==========
+# ========== HELPER ==========
 def get_luminance(hex_color):
     hex_color = hex_color.lstrip('#')
     if len(hex_color) != 6:
@@ -206,7 +212,7 @@ def get_luminance(hex_color):
     b = int(hex_color[4:6], 16) / 255.0
     return 0.299 * r + 0.587 * g + 0.114 * b
 
-# ========== INITIALISE SESSION STATE ==========
+# ========== INIT SESSION ==========
 if "cv_text" not in st.session_state:
     st.session_state.cv_text = get_cv_template()
 if "swot_text" not in st.session_state:
@@ -234,15 +240,21 @@ with st.sidebar:
     
     if bg_mode == "Preset Theme":
         bg_css = BACKGROUND_PRESETS[doc_type]
+        # Override for bio: use solid white to ensure PDF generation
+        if doc_type == "Executive Bio":
+            # Keep the preset gradient for live preview? But we want PDF to work.
+            # We'll use a solid colour for both preview and PDF for bio.
+            bg_css = "#ffffff"
     else:
-        default_solid = "#ffffff" if "gradient" in str(BACKGROUND_PRESETS[doc_type]) else BACKGROUND_PRESETS[doc_type]
+        default_solid = "#ffffff"
         bg_css = st.color_picker("Custom Background Colour", default_solid)
     
     header_color = st.color_picker("Primary Header Shield", HEADER_COLOR_PRESETS[doc_type])
+    
     auto_text = st.checkbox("Auto Text Color (based on background)", value=True)
     
     if auto_text:
-        if bg_css.startswith("linear-gradient"):
+        if bg_css.startswith("linear-gradient") or bg_css == "linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)":
             text_color = "#1a2a3a"
         else:
             luminance = get_luminance(bg_css)
@@ -252,96 +264,53 @@ with st.sidebar:
     
     font_family = st.selectbox("Typography Family", ["Segoe UI", "Arial", "Georgia", "Roboto"], index=0)
 
-# ========== HTML GENERATOR ==========
+# ========== HTML BUILDER ==========
 def build_html_document(title, body_text, bg, text_col, heading_col, font, for_pdf=False):
     escaped_body = body_text.replace("\n", "<br>")
     
-    # REFACTORED TO BLOCK PATTERNS (NO FLOATS OR TABLES TO ACCIDENTALLY OVEREXPAND MARGINS)
     header_html = f"""
-    <div style="background-color: {heading_col}; padding: 25px; border-radius: 12px; margin-bottom: 30px; box-sizing: border-box; width: 100%;">
-        <div style="text-align: center; margin-bottom: 15px;">
-            <img src="{SRC_LOGO}" width="80" height="95" style="display: inline-block; vertical-align: middle;">
+    <div style="background-color: {heading_col}; padding: 24px; border-radius: 12px; margin-bottom: 30px; display: table; width: 100%; box-sizing: border-box;">
+        <div style="display: table-cell; vertical-align: middle; width: 100px;">
+            <img src="{SRC_LOGO}" width="85" height="100" style="display: block;">
         </div>
-        <div style="text-align: center; font-family: 'Segoe UI', sans-serif;">
-            <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: bold; letter-spacing: 0.5px;">GESNER DESLANDES</h1>
-            <p style="margin: 4px 0; color: #ffd700; font-size: 14px; font-weight: bold; letter-spacing: 1px;">SOFTWARE ARCHITECT & AI SOLUTIONS ENGINEER</p>
-            <p style="margin: 0; color: #f3f0df; font-size: 12px;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
+        <div style="display: table-cell; vertical-align: middle; text-align: right; font-family: 'Segoe UI', sans-serif;">
+            <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: bold; letter-spacing: 0.5px;">GESNER DESLANDES</h1>
+            <p style="margin: 5px 0; color: #f3f0df; font-size: 14px;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
+            <p style="margin: 0; color: #ffd700; font-size: 16px; font-weight: bold; letter-spacing: 1px;">SOFTWARE ARCHITECT & AI SOLUTIONS ENGINEER</p>
         </div>
     </div>
     """
     
     if for_pdf:
+        page_margin = "1.5cm"
         return f"""<!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>{title}</title>
+<head><meta charset="UTF-8"><title>{title}</title>
 <style>
-    @page {{
-        size: Letter;
-        margin: 2cm 2cm 2cm 2cm;
-    }}
-    * {{
-        box-sizing: border-box !important;
-    }}
-    html, body {{
-        margin: 0 !important;
-        padding: 0 !important;
-        background: {bg};
-        width: 100% !important;
-        -webkit-print-color-adjust: exact;
-    }}
-    .document-content {{
-        background: {bg};
-        color: {text_col};
-        font-family: {font}, sans-serif;
-        width: 100% !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }}
-    .text-body {{
-        font-size: 11pt;
-        line-height: 1.6;
-        width: 100% !important;
-        max-width: 100% !important;
-        word-wrap: break-word !important;
-        white-space: normal !important;
-        display: block !important;
-    }}
-    h2, h3, h4 {{ color: {heading_col}; }}
-    hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
+@page {{ size: Letter; margin: {page_margin}; }}
+body {{ margin: 0; padding: 0; background: {bg}; }}
+.document-content {{ background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 0; }}
+h2, h3, h4 {{ color: {heading_col}; }}
+hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
 </style>
 </head>
-<body>
-    <div class="document-content">
-        {header_html}
-        <div class="text-body">{escaped_body}</div>
-    </div>
-</body>
+<body><div class="document-content">{header_html}<div style="font-size: 11pt; line-height: 1.5;">{escaped_body}</div></div></body>
 </html>"""
     else:
         return f"""<!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<title>{title}</title>
+<head><meta charset="UTF-8"><title>{title}</title>
 <style>
-    * {{ box-sizing: border-box; }}
-    body {{ margin: 20px; background: #f0f2f6; }}
-    .document-card {{ background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 30px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); max-width: 100%; }}
-    h2, h3, h4 {{ color: {heading_col}; }}
-    hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
+body {{ margin: 20px; background: #f0f2f6; }}
+.document-card {{ background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 30px; border-radius: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); }}
+h2, h3, h4 {{ color: {heading_col}; }}
+hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
 </style>
 </head>
-<body>
-    <div class="document-card">
-        {header_html}
-        <div style="width: 100%; box-sizing: border-box; word-wrap: break-word;">{escaped_body}</div>
-    </div>
-</body>
+<body><div class="document-card">{header_html}<div>{escaped_body}</div></div></body>
 </html>"""
 
-# ========== EDITOR & PREVIEW ==========
+# ========== EDITOR ==========
 st.subheader(f"📝 Content Control Engine: {doc_type}")
 
 if doc_type == "CV (Resume)":
@@ -358,7 +327,7 @@ else:
     active_payload = st.session_state.cover_text
 
 st.markdown("### 🖥️ Native Live Sandbox Preview")
-st.markdown(f"<div style='background: {bg_css}; padding: 30px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd; box-sizing: border-box; max-width: 100%;'>", unsafe_allow_html=True)
+st.markdown(f"<div style='background: {bg_css}; padding: 30px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd;'>", unsafe_allow_html=True)
 
 col_logo, col_bio = st.columns([1, 4])
 with col_logo:
@@ -373,17 +342,33 @@ with col_bio:
     """, unsafe_allow_html=True)
 
 st.markdown("---")
-st.markdown(f"<div style='color: {text_color}; font-family: {font_family}; white-space: pre-wrap; word-wrap: break-word; max-width: 100%;'>{active_payload}</div>", unsafe_allow_html=True)
+st.markdown(f"<div style='color: {text_color}; font-family: {font_family}; white-space: pre-wrap;'>{active_payload}</div>", unsafe_allow_html=True)
 st.markdown("</div>", unsafe_allow_html=True)
 
-# ========== PDF EXPORT ==========
+# ========== PDF EXPORT (with error handling) ==========
 st.markdown("### 📥 Document Asset Distribution Channel")
-live_pdf_html = build_html_document(doc_type, active_payload, bg_css, text_color, header_color, font_family, for_pdf=True)
-pdf_export_bytes = HTML(string=live_pdf_html).write_pdf()
-st.download_button(
-    label=f"🏆 Compile & Export {doc_type} to PDF Sheet",
-    data=pdf_export_bytes,
-    file_name=f"gesner_deslandes_{doc_type.lower().replace(' ', '_')}.pdf",
-    mime="application/pdf",
-    use_container_width=True
-)
+try:
+    live_pdf_html = build_html_document(doc_type, active_payload, bg_css, text_color, header_color, font_family, for_pdf=True)
+    pdf_export_bytes = HTML(string=live_pdf_html).write_pdf()
+    st.download_button(
+        label=f"🏆 Compile & Export {doc_type} to PDF Sheet",
+        data=pdf_export_bytes,
+        file_name=f"gesner_deslandes_{doc_type.lower().replace(' ', '_')}.pdf",
+        mime="application/pdf",
+        use_container_width=True
+    )
+except Exception as e:
+    st.error(f"PDF generation failed: {str(e)}")
+    st.info("Attempting fallback: using solid white background for this export.")
+    # Fallback: use solid white background and black text
+    fallback_bg = "#ffffff"
+    fallback_text = "#1a2a3a"
+    fallback_html = build_html_document(doc_type, active_payload, fallback_bg, fallback_text, header_color, font_family, for_pdf=True)
+    fallback_pdf = HTML(string=fallback_html).write_pdf()
+    st.download_button(
+        label=f"⬇️ Fallback Export {doc_type} (White Background)",
+        data=fallback_pdf,
+        file_name=f"gesner_deslandes_{doc_type.lower().replace(' ', '_')}_fallback.pdf",
+        mime="application/pdf",
+        use_container_width=True
+    )
