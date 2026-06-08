@@ -256,35 +256,40 @@ with st.sidebar:
 def build_html_document(title, body_text, bg, text_col, heading_col, font, for_pdf=False):
     escaped_body = body_text.replace("\n", "<br>")
     
-    # STRUCTURAL PROTECTION: table-layout: fixed + full dimension containment
+    # FIXED MARGIN HEADER SHIELD USING PERCENTAGE SEGREGATION
     header_html = f"""
     <div style="background-color: {heading_col}; padding: 24px; border-radius: 12px; margin-bottom: 30px; display: table; width: 100%; box-sizing: border-box; table-layout: fixed;">
-        <div style="display: table-cell; vertical-align: middle; width: 100px;">
-            <img src="{SRC_LOGO}" width="85" height="100" style="display: block;">
+        <div style="display: table-cell; vertical-align: middle; width: 15%;">
+            <img src="{SRC_LOGO}" width="85" height="100" style="display: block; max-width: 100%; height: auto;">
         </div>
-        <div style="display: table-cell; vertical-align: middle; text-align: right; font-family: 'Segoe UI', sans-serif;">
-            <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: bold; letter-spacing: 0.5px;">GESNER DESLANDES</h1>
+        <div style="display: table-cell; vertical-align: middle; width: 85%; text-align: right; font-family: 'Segoe UI', sans-serif;">
+            <h1 style="margin: 0; color: #ffffff; font-size: 30px; font-weight: bold; letter-spacing: 0.5px;">GESNER DESLANDES</h1>
             <p style="margin: 5px 0; color: #f3f0df; font-size: 14px;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
-            <p style="margin: 0; color: #ffd700; font-size: 16px; font-weight: bold; letter-spacing: 1px;">SOFTWARE ARCHITECT & AI SOLUTIONS ENGINEER</p>
+            <p style="margin: 0; color: #ffd700; font-size: 15px; font-weight: bold; letter-spacing: 1px;">SOFTWARE ARCHITECT & AI SOLUTIONS ENGINEER</p>
         </div>
     </div>
     """
     
     if for_pdf:
-        page_margin = "1.5cm"
         return f"""<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"><title>{title}</title>
 <style>
-* {{ box-sizing: border-box; }}
-@page {{ size: Letter; margin: {page_margin}; }}
-body {{ margin: 0; padding: 0; background: {bg}; width: 100%; }}
-.document-content {{ background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 0; width: 100%; word-wrap: break-word; }}
+* {{ box-sizing: border-box !important; }}
+@page {{ size: Letter; margin: 1.8cm 1.8cm 1.8cm 1.8cm; }}
+body {{ margin: 0; padding: 0; background: {bg}; width: 100%; -webkit-print-color-adjust: exact; }}
+.document-content {{ background: {bg}; color: {text_col}; font-family: {font}, sans-serif; padding: 0; width: 100%; }}
+.text-body {{ font-size: 11pt; line-height: 1.6; width: 100%; max-width: 100%; word-wrap: break-word; word-break: break-word; white-space: normal; }}
 h2, h3, h4 {{ color: {heading_col}; }}
 hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
 </style>
 </head>
-<body><div class="document-content">{header_html}<div style="font-size: 11pt; line-height: 1.5; width: 100%; box-sizing: border-box;">{escaped_body}</div></div></body>
+<body>
+    <div class="document-content">
+        {header_html}
+        <div class="text-body">{escaped_body}</div>
+    </div>
+</body>
 </html>"""
     else:
         return f"""<!DOCTYPE html>
@@ -298,7 +303,12 @@ h2, h3, h4 {{ color: {heading_col}; }}
 hr {{ margin: 1.5em 0; border: 1px solid {heading_col}; opacity: 0.3; }}
 </style>
 </head>
-<body><div class="document-card">{header_html}<div style="width: 100%; box-sizing: border-box;">{escaped_body}</div></div></body>
+<body>
+    <div class="document-card">
+        {header_html}
+        <div style="width: 100%; box-sizing: border-box; word-wrap: break-word;">{escaped_body}</div>
+    </div>
+</body>
 </html>"""
 
 # ========== EDITOR & PREVIEW ==========
