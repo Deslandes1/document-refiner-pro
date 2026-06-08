@@ -14,7 +14,6 @@ st.markdown("""
 <style>
     .stApp { background-color: #f0f2f6; }
     .stButton>button { background-color: #2c7be5; color: white; border-radius: 25px; width: 100%; }
-    .preview-container { background: white; border-radius: 15px; padding: 1rem; margin-top: 1rem; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -146,14 +145,9 @@ Fluent in English, French, Spanish, and Haitian Creole, Gesner is highly self‑
 He is now seeking a contract Software Architect or Platform Engineer role where he can apply his unique combination of technical depth and product delivery to help organisations scale their systems efficiently.
 """
 
-def get_cover_template():
+def get_cover_body_template():
     today = datetime.now().strftime("%B %d, %Y")
-    return f"""<div style="background: #0a4c8c; padding: 1.5rem; border-radius: 15px; text-align: center; margin-bottom: 2rem; color: white;">
-<h1 style="margin: 0; color: white;">Gesner Deslandes</h1>
-<p style="margin: 0.5rem 0 0; color: #e0e0e0;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
-</div>
-
-Date: {today}
+    return f"""{today}
 
 RE: Software Architect (Contract) Role
 
@@ -169,7 +163,9 @@ I am fully remote, available immediately, and willing to travel when required. I
 
 Sincerely,
 Gesner Deslandes
-Engineer‑in‑Chief, GlobalInternet.py"""
+Engineer‑in‑Chief, GlobalInternet.py
+(509) 4738 5663 | deslandes78@gmail.com
+"""
 
 # ========== SESSION STATE ==========
 if "doc_type" not in st.session_state:
@@ -181,7 +177,7 @@ if "swot_text" not in st.session_state:
 if "bio_text" not in st.session_state:
     st.session_state.bio_text = get_bio_template()
 if "cover_text" not in st.session_state:
-    st.session_state.cover_text = get_cover_template()
+    st.session_state.cover_text = get_cover_body_template()
 
 # ========== SIDEBAR ==========
 with st.sidebar:
@@ -227,13 +223,25 @@ with st.sidebar:
 
 # ========== HELPER FUNCTION ==========
 def generate_html(title, content, bg, text_col, heading_col, font):
-    # Convert plain text to HTML with <br> and preserve structure
-    lines = content.split("\n")
-    # For cover letter, we already have HTML header, so we just pass through
     if title == "Cover_Letter":
-        html_content = content
+        # Build professional cover letter with fixed header and signature
+        today = datetime.now().strftime("%B %d, %Y")
+        # The content includes date, RE, body, closing. We'll wrap it.
+        # Ensure content starts with date (it does from template)
+        html_content = f"""
+<div style="text-align: center; background: {heading_col}; padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem; color: white;">
+    <h1 style="margin: 0; color: white;">Gesner Deslandes</h1>
+    <p style="margin: 0.5rem 0 0; opacity: 0.9;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
+</div>
+<div style="margin-bottom: 1rem;">
+    {content.replace(chr(10), '<br>')}
+</div>
+"""
     else:
+        # For other documents, simple text conversion
+        lines = content.split("\n")
         html_content = "<br>".join([line if line.strip() == "" else line for line in lines])
+    
     return f"""<!DOCTYPE html>
 <html>
 <head>
