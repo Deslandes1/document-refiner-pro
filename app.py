@@ -240,7 +240,6 @@ def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=Fals
         html_content = "<br>".join([line if line.strip() == "" else line for line in lines])
     
     if pdf_mode:
-        # Full-page PDF style sheet handling background propagation cleanly
         style_extra = f"""
             @page {{
                 size: Letter;
@@ -257,7 +256,7 @@ def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=Fals
             .document {{
                 width: 100%;
                 margin: 0;
-                padding: 0;
+                padding: 0.5cm 1cm;
                 box-sizing: border-box;
                 word-wrap: break-word;
             }}
@@ -269,7 +268,6 @@ def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=Fals
             }}
         """
     else:
-        # Screen preview: card format retained
         style_extra = f"""
             body {{
                 margin: 0;
@@ -344,7 +342,7 @@ st.subheader("📄 Live Preview")
 preview_html = generate_html(st.session_state.doc_type.replace(" ", "_"), edited_text, bg_css, text_color, heading_color, font_family, pdf_mode=False)
 st.components.v1.html(preview_html, height=650, scrolling=True)
 
-# Compilation and Native Streamlit handling for Single Document Download
+# Pre-generate current document bytes for seamless layout delivery
 pdf_html = generate_html(st.session_state.doc_type.replace(" ", "_"), edited_text, bg_css, text_color, heading_color, font_family, pdf_mode=True)
 pdf_bytes = HTML(string=pdf_html).write_pdf()
 
@@ -356,4 +354,4 @@ st.download_button(
     use_container_width=True
 )
 
-st.info("💡 The PDF now fills the entire letter‑size sheet with the chosen background – no white margins or frames.")
+st.info("💡 The PDF now fills the entire letter‑size sheet with safe internal content gutters – edge-to-edge colors with clean padding.")
