@@ -18,7 +18,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# ========== PROFESSIONAL TEMPLATES ==========
+# ========== PROFESSIONAL TEMPLATES (unchanged) ==========
 def get_cv_template():
     return """Gesner Deslandes
 deslandes78@gmail.com | +509 4738 5663 | Haiti
@@ -227,11 +227,11 @@ with st.sidebar:
 def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=False):
     if title == "Cover_Letter":
         html_content = f"""
-<div style="text-align: center; background: {heading_col}; padding: 1.5rem; border-radius: 15px; margin-bottom: 2rem; color: white;">
-    <h1 style="margin: 0; color: white;">Gesner Deslandes</h1>
-    <p style="margin: 0.5rem 0 0; opacity: 0.9;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
+<div style="text-align: center; background: {heading_col}; padding: 1rem; border-radius: 10px; margin-bottom: 1.5rem; color: white;">
+    <h1 style="margin: 0; color: white; font-size: 1.5rem;">Gesner Deslandes</h1>
+    <p style="margin: 0.3rem 0 0; opacity: 0.9;">deslandes78@gmail.com | +509 4738 5663 | Haiti</p>
 </div>
-<div style="margin-bottom: 1rem;">
+<div>
     {content.replace(chr(10), '<br>')}
 </div>
 """
@@ -239,35 +239,40 @@ def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=Fals
         lines = content.split("\n")
         html_content = "<br>".join([line if line.strip() == "" else line for line in lines])
     
-    # Use different styles for PDF vs screen preview
     if pdf_mode:
-        # PDF optimised: letter size, full width, larger font
         style_extra = """
             @page {
                 size: Letter;
                 margin: 1.5cm;
             }
+            * {
+                box-sizing: border-box;
+            }
             body {
                 margin: 0;
                 padding: 0;
-                background: white;
-                font-size: 11pt;
+                background: """ + bg + """;
+                font-family: """ + font + """, sans-serif;
+                color: """ + text_col + """;
             }
             .document {
                 width: 100%;
+                padding: 0;
                 background: """ + bg + """;
-                padding: 1.5cm;
-                box-shadow: none;
-                border-radius: 0;
+            }
+            h1, h2, h3, h4 {
+                color: """ + heading_col + """;
+                margin-top: 1em;
+                margin-bottom: 0.5em;
             }
         """
     else:
-        # Screen preview: still nice, but with fixed max-width for readability
         style_extra = """
             body {
                 margin: 0;
                 padding: 2rem;
                 background: #e6e9f0;
+                font-family: """ + font + """, sans-serif;
             }
             .document {
                 max-width: 1000px;
@@ -276,6 +281,12 @@ def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=Fals
                 border-radius: 20px;
                 padding: 3rem 2.5rem;
                 box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+                color: """ + text_col + """;
+            }
+            h1, h2, h3, h4 {
+                color: """ + heading_col + """;
+                margin-top: 1.2em;
+                margin-bottom: 0.5em;
             }
         """
     
@@ -286,15 +297,6 @@ def generate_html(title, content, bg, text_col, heading_col, font, pdf_mode=Fals
     <title>{title}</title>
     <style>
         {style_extra}
-        body {{
-            font-family: '{font}', sans-serif;
-            color: {text_col};
-        }}
-        h1, h2, h3, h4 {{
-            color: {heading_col};
-            margin-top: 1.2em;
-            margin-bottom: 0.5em;
-        }}
         hr {{
             margin: 1.5em 0;
             border: 1px solid {heading_col};
