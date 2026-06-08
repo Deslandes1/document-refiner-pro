@@ -51,7 +51,7 @@ Live: https://hospital-management-system-software-built-by-gesner-deslandes.stre
 
 PROFESSIONAL EXPERIENCE
 
-GlobalInternet.py – Founder & Engineer‑in‑Chief | 2021 – Present
+GLOBALINTERNET.PY – Founder & Engineer‑in‑Chief | 2021 – Present
 - Formulated and delivered 37 advanced Python applications ranging from biometric voting engines and custom business intelligence suites to interactive autonomous vehicle simulators.
 - Directed all high-level operational phases: strategic architecture design, agile product coding, client discovery, and secure cloud system deployment.
 - Maintained a production tech stack focused on Streamlit framework mastery, real-time data streaming, and deep API integrations (Groq, edge-tts).
@@ -129,7 +129,7 @@ Prepared for: Marcy / Career Coach Marcy
 Prepared by: Gesner Deslandes
 Date: June 2026
 
-Gesner Deslandes is the Founder, Owner, and Engineer‑in‑Chief of GlobalInternet.py, a software development company that builds custom Python and AI‑powered solutions for clients worldwide. With over four years of hands‑on experience, he has delivered 37 unique software products, including real‑time system health monitors, AI‑powered anti‑trafficking platforms, hospital management systems, and multilingual educational tools.
+Gesner Deslandes is the Founder, Owner, and Engineer‑in‑Chief of GLOBALINTERNET.PY, a software development company that builds custom Python and AI‑powered solutions for clients worldwide. With over four years of hands‑on experience, he has delivered 37 unique software products, including real‑time system health monitors, AI‑powered anti‑trafficking platforms, hospital management systems, and multilingual educational tools.
 
 His technical expertise spans system architecture, full‑stack development (Python, Streamlit, Pandas, Plotly), AI integration (Groq Llama 3.1), cloud deployment (Streamlit Cloud, GitHub), and real‑time observability. He designs and builds end‑to‑end solutions that solve real problems – from anomaly detection to multilingual AI voice synthesis.
 
@@ -150,7 +150,7 @@ Dear Hiring Manager,
 
 I am writing to formally express my interest in the Senior Software Architect and Platform Engineer contract positions with your organization. Bringing a proven portfolio of 37 custom-engineered Python systems deployed to global production, I offer a potent blend of advanced systems infrastructure engineering, deep AI model integration, and proactive project leadership.
 
-Throughout my tenure as Engineer-in-Chief at GlobalInternet.py, I have specialized in building robust solutions to complex computational problems. My recent system, the System Health AI Monitor, directly demonstrates my capacity to design and architect real-time observability platforms. This production tool simulates complex infrastructure metrics, executes multi-threaded anomaly tracking, and interfaces with specialized Groq Llama 3.1 pipelines to render instant, context-aware architectural feedback. 
+Throughout my tenure as Engineer-in-Chief at GLOBALINTERNET.PY, I have specialized in building robust solutions to complex computational problems. My recent system, the System Health AI Monitor, directly demonstrates my capacity to design and architect real-time observability platforms. This production tool simulates complex infrastructure metrics, executes multi-threaded anomaly tracking, and interfaces with specialized Groq Llama 3.1 pipelines to render instant, context-aware architectural feedback. 
 
 Furthermore, I have architected high-impact solutions encompassing multilingual educational framework packages, enterprise asset software, and safety platforms built around international security models. I directly command the entire lifecycle of software execution—translating rough client operational hurdles into scalable system schemas, optimizing code maintainability via clean Python logic, writing comprehensive unit pipelines, and provisioning reliable, low-latency live operations on Streamlit Cloud using GitHub workflows.
 
@@ -160,7 +160,7 @@ I welcome the opportunity to dive deep into your active platform milestones and 
 
 Sincerely,
 Gesner Deslandes
-Engineer‑in‑Chief, GlobalInternet.py
+Engineer‑in‑Chief, GLOBALINTERNET.PY
 (509) 4738 5663 | deslandes78@gmail.com
 """
 
@@ -231,7 +231,7 @@ with st.sidebar:
     font_family = st.selectbox("Font Family", ["Segoe UI", "Arial", "Georgia", "Roboto", "Calibri"], index=0)
     
     st.markdown("---")
-    st.caption("Built by Gesner Deslandes | GlobalInternet.py")
+    st.caption("Built by Gesner Deslandes | GLOBALINTERNET.PY")
     
     # Download all as ZIP (PDF)
     if st.button("📦 Download All Documents as ZIP (PDF)", use_container_width=True):
