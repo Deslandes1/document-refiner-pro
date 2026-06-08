@@ -57,63 +57,60 @@ st.logo(SRC_LOGO)
 # ========== DATA CACHE TEMPLATES ==========
 def get_cv_template():
     return """PROFESSIONAL SUMMARY
-
 Results‑driven Senior Software Architect with 4+ years of experience designing, building, and deploying 37 custom enterprise and AI applications for global clients. Expert in Python ecosystem, Streamlit engineering, advanced AI integration (Groq Llama 3.1), real‑time distributed systems, and cloud architecture. Proven ability to lead full‑cycle product engineering from baseline requirements to scalable cloud production. Fluent in English, French, Spanish, Haitian Creole.
 
 CORE COMPETENCIES
+System Architecture: Distributed real‑time data pipelines, high-throughput observability platforms, API design
 
-- System Architecture: Distributed real‑time data pipelines, high-throughput observability platforms, API design
-- AI & Machine Learning: LLM integration, prompt engineering, anomaly detection, autonomous agent logic
-- Full‑Stack Development: Python, Streamlit, Pandas, Plotly, asynchronous REST APIs
-- Cloud & DevOps: Streamlit Cloud infrastructure, advanced GitHub version control, secrets management, CI/CD pipelines
-- Multilingual Solutions: Cross-border UI/UX adaptation, internationalization, and AI audio synthesis
+AI & Machine Learning: LLM integration, prompt engineering, anomaly detection, autonomous agent logic
+
+Full‑Stack Development: Python, Streamlit, Pandas, Plotly, asynchronous REST APIs
+
+Cloud & DevOps: Streamlit Cloud infrastructure, advanced GitHub version control, secrets management, CI/CD pipelines
+
+Multilingual Solutions: Cross-border UI/UX adaptation, internationalization, and AI audio synthesis
 
 KEY PROJECTS
-
 System Health AI Monitor | Architect & Creator
 Live: https://system-health-ai-monitor-important-9bemdyosmbfmtx4t8wygbv.streamlit.app/
-- Designed and deployed an enterprise-grade observability platform that simulates mission-critical server metrics, detects systemic anomalies, and generates AI‑driven predictive insights via Groq Llama 3.1.
-- Engineered a multilingual user interface (English, French, Spanish) along with synchronized AI vocal diagnostics leveraging edge‑tts.
+Designed and deployed an enterprise-grade observability platform that simulates mission-critical server metrics, detects systemic anomalies, and generates AI‑driven predictive insights via Groq Llama 3.1.
+Engineered a multilingual user interface (English, French, Spanish) along with synchronized AI vocal diagnostics leveraging edge‑tts.
 
 SafeHaven – Anti‑Trafficking AI | Lead Developer
 Live: https://call-for-code-ai-global-challenge-2026-jimupcwzzyntghxdwxpbg9.streamlit.app/
-- Built an AI‑powered early warning intelligence system that processes user‑submitted risk environments, flags human trafficking indicators, and handles anonymous data routing.
-- Leveraged Groq LLM backends to generate granular risk matrices and automated situational action plans.
+Built an AI‑powered early warning intelligence system that processes user‑submitted risk environments, flags human trafficking indicators, and handles anonymous data routing.
+Leveraged Groq LLM backends to generate granular risk matrices and automated situational action plans.
 
 Hospital Management System | Full‑Stack Developer
 Live: https://hospital-management-system-software-built-by-gesner-deslandes.streamlit.app/
-- Developed an all-in-one hospital management suite spanning modern patient intake, EMR logs, dynamic ledger billing, pharmacy tracking, and an integrated AI diagnostic core.
-- Configured real‑time system alerts and dynamic multilingual translation layers.
+Developed an all-in-one hospital management suite spanning modern patient intake, EMR logs, dynamic ledger billing, pharmacy tracking, and an integrated AI diagnostic core.
+Configured real‑time system alerts and dynamic multilingual translation layers.
 
 PROFESSIONAL EXPERIENCE
-
 GLOBALINTERNET.PY – Founder & Engineer‑in‑Chief | 2021 – Present
-- Formulated and delivered 37 advanced Python applications ranging from biometric voting engines and custom business intelligence suites to interactive autonomous vehicle simulators.
-- Directed all high-level operational phases: strategic architecture design, agile product coding, client discovery, and secure cloud system deployment.
-- Maintained a production tech stack focused on Streamlit framework mastery, real-time data streaming, and deep API integrations (Groq, edge-tts).
+Formulated and delivered 37 advanced Python applications ranging from biometric voting engines and custom business intelligence suites to interactive autonomous vehicle simulators.
+Directed all high-level operational phases: strategic architecture design, agile product coding, client discovery, and secure cloud system deployment.
+Maintained a production tech stack focused on Streamlit framework mastery, real-time data streaming, and deep API integrations (Groq, edge-tts).
 
 Be Like Brit Orphanage – Technology Coordinator | 2021 – Present
-- Supervise core IT infrastructure, cloud connectivity protocols, security firewalls, and hardware availability matrices for over 50 power users.
-- Independently manage full-system troubleshooting and hardware asset management under dynamic infrastructure profiles.
+Supervise core IT infrastructure, cloud connectivity protocols, security firewalls, and hardware availability matrices for over 50 power users.
+Independently manage full-system troubleshooting and hardware asset management under dynamic infrastructure profiles.
 
 EDUCATION & CERTIFICATIONS
-
-- Senior-Level Software Architecture Portfolio (Continuous Practical Research)
-- Vocational Training Certification – Advanced American English
-- Office Computing Specialist Certification
-- High School Graduate
+Senior-Level Software Architecture Portfolio (Continuous Practical Research)
+Vocational Training Certification – Advanced American English
+Office Computing Specialist Certification
+High School Graduate
 
 LANGUAGES
-
-- English – Professional working proficiency
-- French – Professional working proficiency
-- Spanish – Conversational
-- Haitian Creole – Native
+English – Professional working proficiency
+French – Professional working proficiency
+Spanish – Conversational
+Haitian Creole – Native
 
 REFERENCES
-
-- Teresa Lang Ehlert: tbtrekkin@gmail.com
-- Charles Zerr MD: +1 620 952 0074"""
+Teresa Lang Ehlert: tbtrekkin@gmail.com
+Charles Zerr MD: +1 620 952 0074"""
 
 def get_swot_template():
     return """Executive SWOT Analysis
@@ -164,7 +161,7 @@ with st.sidebar:
     st.markdown("---")
     st.subheader("🎨 Profile Themes")
     
-    # EXACT HISTORICAL MAIN PAGE BACKGROUND MAPPINGS
+    # SYSTEM BACKUP DEFINITIONS FOR ORIGINAL INDIVIDUAL CANVAS BACKGROUNDS
     default_backgrounds = {
         "CV (Resume)": "#ffffff",
         "SWOT Analysis": "linear-gradient(135deg, #e2e2e2 0%, #c9d6ff 100%)",
@@ -172,15 +169,15 @@ with st.sidebar:
         "Cover Letter": "#ffffff"
     }
     
-    # EXACT HISTORICAL HEADER COLOR SHIELD MAPPINGS 
+    # SYSTEM BACKUP DEFINITIONS FOR ORIGINAL HEADER BANNER SHIELDS
     default_headers = {
-        "CV (Resume)": "#0a4c8c",     # Corporate Shield Dark Blue
-        "SWOT Analysis": "#1e293b",   # Deep Slate Accent
-        "Executive Bio": "#312e81",   # Midnight Indigo
-        "Cover Letter": "#0f766e"     # Deep Teal
+        "CV (Resume)": "#0a4c8c",
+        "SWOT Analysis": "#1e293b",
+        "Executive Bio": "#312e81",
+        "Cover Letter": "#0f766e"
     }
     
-    # Auto-assign variables based on selected asset target
+    # Set default values dynamically based on selected option
     bg_css = default_backgrounds[doc_type]
     header_assigned_color = default_headers[doc_type]
     
@@ -249,7 +246,6 @@ else:
 # ========== STABLE RENDERING CANVAS WORKAROUND ==========
 st.markdown("### 🖥️ Native Live Sandbox Preview")
 
-# Sandbox container embedding the specific main page background color dynamically
 st.markdown(f"""
 <div style="background: {bg_css}; padding: 30px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd;">
 """, unsafe_allow_html=True)
