@@ -47,7 +47,7 @@ B64_LOGO = base64.b64encode(LOGO_SVG.encode('utf-8')).decode('utf-8')
 SRC_LOGO = f"data:image/svg+xml;base64,{B64_LOGO}"
 st.logo(SRC_LOGO)
 
-# ========== CV TEMPLATE (your updated text) ==========
+# ========== TEMPLATES ==========
 def get_cv_template():
     return """PROFESSIONAL SUMMARY
 Results‑driven Senior Software Architect with 4+ years of experience designing, building, and deploying 37 custom enterprise and AI applications for global clients. Expert in Python ecosystem, Streamlit engineering, advanced AI integration (Groq Llama 3.1), real‑time distributed systems, and cloud architecture. Proven ability to lead full‑cycle product engineering from baseline requirements to scalable cloud production. Fluent in English, French, Spanish, Haitian Creole.
@@ -180,7 +180,7 @@ Engineer‑in‑Chief, GlobalInternet.py
 (509) 4738 5663 | deslandes78@gmail.com
 """
 
-# ========== THEME PRESETS ==========
+# ========== THEME PRESETS (defaults) ==========
 BACKGROUND_PRESETS = {
     "CV (Resume)": "#ffffff",
     "SWOT Analysis": "linear-gradient(135deg, #e2e2e2 0%, #c9d6ff 100%)",
@@ -215,15 +215,20 @@ with st.sidebar:
     st.markdown("---")
     st.subheader("🎨 Profile Themes")
     
+    # Reset colour pickers when document type changes
     if doc_type != st.session_state.last_doc_type:
         st.session_state.last_doc_type = doc_type
         st.rerun()
     
-    bg_css = BACKGROUND_PRESETS[doc_type]
-    header_assigned_color = HEADER_COLOR_PRESETS[doc_type]
+    # Background colour picker (initialised with preset, but user can override)
+    default_bg = BACKGROUND_PRESETS[doc_type]
+    bg_css = st.color_picker("Document Background Color", default_bg)
+    
+    # Header shield colour picker
+    default_header = HEADER_COLOR_PRESETS[doc_type]
+    heading_color = st.color_picker("Primary Header Shield", default_header)
     
     text_color = st.color_picker("Body Text Ink", "#1a2a3a")
-    heading_color = st.color_picker("Primary Header Shield", header_assigned_color)
     font_family = st.selectbox("Typography Family", ["Segoe UI", "Arial", "Georgia", "Roboto"], index=0)
 
 # ========== HTML GENERATOR ==========
