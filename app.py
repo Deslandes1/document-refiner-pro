@@ -164,7 +164,7 @@ with st.sidebar:
     st.markdown("---")
     st.subheader("🎨 Profile Themes")
     
-    # SYSTEM BACKUP DEFINITIONS FOR ORIGINAL INDIVIDUAL CANVAS BACKGROUNDS
+    # EXACT HISTORICAL MAIN PAGE BACKGROUND MAPPINGS
     default_backgrounds = {
         "CV (Resume)": "#ffffff",
         "SWOT Analysis": "linear-gradient(135deg, #e2e2e2 0%, #c9d6ff 100%)",
@@ -172,11 +172,20 @@ with st.sidebar:
         "Cover Letter": "#ffffff"
     }
     
-    # Initialize with default for target document type
+    # EXACT HISTORICAL HEADER COLOR SHIELD MAPPINGS 
+    default_headers = {
+        "CV (Resume)": "#0a4c8c",     # Corporate Shield Dark Blue
+        "SWOT Analysis": "#1e293b",   # Deep Slate Accent
+        "Executive Bio": "#312e81",   # Midnight Indigo
+        "Cover Letter": "#0f766e"     # Deep Teal
+    }
+    
+    # Auto-assign variables based on selected asset target
     bg_css = default_backgrounds[doc_type]
+    header_assigned_color = default_headers[doc_type]
     
     text_color = st.color_picker("Body Text Ink", "#1a2a3a")
-    heading_color = st.color_picker("Primary Header Shield", "#0a4c8c")
+    heading_color = st.color_picker("Primary Header Shield", header_assigned_color)
     font_family = st.selectbox("Typography Family", ["Segoe UI", "Arial", "Georgia", "Roboto"], index=0)
 
 # ========== COMPILER CORE ENGINE ==========
@@ -240,7 +249,7 @@ else:
 # ========== STABLE RENDERING CANVAS WORKAROUND ==========
 st.markdown("### 🖥️ Native Live Sandbox Preview")
 
-# Dynamic live rendering container applying background colors seamlessly per file type
+# Sandbox container embedding the specific main page background color dynamically
 st.markdown(f"""
 <div style="background: {bg_css}; padding: 30px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #ddd;">
 """, unsafe_allow_html=True)
